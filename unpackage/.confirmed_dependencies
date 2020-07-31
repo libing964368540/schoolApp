@@ -1,0 +1,142 @@
+{
+  "index.html": {
+    "refer": [
+      "view/login/login.html",
+      "view/classes/index.html",
+      "view/personal/index.html",
+      "view/leave/index.html",
+      "view/students/index.html",
+      "view/duty/index.html",
+      "view/student/index.html",
+      "view/nowState/index.html",
+      "view/classes/classdetail.html"
+    ],
+    "resources": [
+      "view/students/index.html",
+      "view/student/index.html",
+      "view/nowState/index.html"
+    ]
+  },
+  "view/students/index.html": {
+    "refer": [
+      "view/students/offcanvas-drag-left-plus-menu.html",
+      "view/students/batchscore.html",
+      "view/students/detail.html"
+    ],
+    "resources": []
+  },
+  "view/classes/index.html": {
+    "refer": [
+      "view/classes/offcanvas-drag-left-plus-menu.html",
+      "view/classes/classdetail.html",
+      "view/classes/batchscore.html"
+    ],
+    "resources": []
+  },
+  "view/leave/index.html": {
+    "refer": [
+      "view/leave/offcanvas-drag-left-plus-menu.html",
+      "view/leave/check.html",
+      "view/leave/new-leave.html"
+    ],
+    "resources": []
+  },
+  "view/students/batchscore.html": {
+    "refer": [
+      "view/students/selectStudents.html",
+      "view/students/scoreObject.html",
+      "view/component/score-succ.html"
+    ],
+    "resources": []
+  },
+  "view/personal/index.html": {
+    "refer": [
+      "view/personal/setting.html",
+      "view/message/messageList.html",
+      "view/personal/person-information.html",
+      "view/personal/editRole.html"
+    ],
+    "resources": []
+  },
+  "view/message/messageList.html": {
+    "refer": [
+      "view/leave/check.html"
+    ],
+    "resources": []
+  },
+  "view/personal/setting.html": {
+    "refer": [
+      "view/personal/newMessage.html",
+      "view/personal/editMm.html",
+      "view/personal/editRole.html",
+      "view/login/login.html"
+    ],
+    "resources": []
+  },
+  "view/students/detail.html": {
+    "refer": [
+      "view/students/information.html",
+      "view/students/student-history.html",
+      "view/students/score.html"
+    ],
+    "resources": []
+  },
+  "view/students/score.html": {
+    "refer": [
+      "view/students/scoreObject.html",
+      "view/component/score-succ.html"
+    ],
+    "resources": []
+  },
+  "view/classes/batchscore.html": {
+    "refer": [
+      "view/classes/selectClass.html",
+      "view/classes/scoreObject.html",
+      "view/classes/selectStudents.html",
+      "view/students/scoreObject.html"
+    ],
+    "resources": []
+  },
+  "view/duty/index.html": {
+    "refer": [
+      "view/duty/offcanvas-drag-left-plus-menu.html",
+      "view/duty/duty-offcanvas-drag-left-plus-menu.html",
+      "view/classes/offcanvas-drag-left-plus-menu.html",
+      "view/students/offcanvas-drag-left-plus-menu.html"
+    ]
+  },
+  "view/student/index.html": {
+    "refer": [
+      "view/student/information.html",
+      "view/student/student-history.html"
+    ]
+  },
+  "view/classes/classdetail.html": {
+    "refer": [
+      "view/classes/offcanvas-drag-right-plus-menu.html",
+      "view/classes/batchscore.html"
+    ]
+  },
+  "view/nowState/index.html": {
+    "refer": [
+      "view/punch/index.html",
+      "view/classes/deleteScoreHistoryForclasses.html",
+      "view/students/deleteScoreHistory.html"
+    ]
+  },
+  "view/punch/index.html": {
+    "refer": [
+      "view/punch/punch-offcanvas-drag-left-plus-menu.html"
+    ]
+  },
+  "view/classes/deleteScoreHistoryForclasses.html": {
+    "refer": [
+      "view/classes/offcanvas-drag-right-plus-menuforClasses.html"
+    ]
+  },
+  "view/students/deleteScoreHistory.html": {
+    "refer": [
+      "view/students/offcanvas-drag-right-plus-menuForStudent.html"
+    ]
+  }
+}

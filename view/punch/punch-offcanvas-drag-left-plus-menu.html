@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			.mui-content {
+				padding-left: 10px;
+				padding-right: 30px;
+			}
+			
+			header.mui-bar {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="app">
+			<div id="offCanvasWrapper">
+				<div class="title">筛选</div>
+				<div class="from">
+					<div>
+						<p>考勤类型</p>
+						<div class="flex just-center" @tap="showLeaveTypePick">
+							<span v-text="leaveTypePick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+					<div>
+						<p>状态</p>
+						<div class="flex just-center" @tap="showStatePick">
+							<span v-text="statePick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+				</div>
+				<div class="btn">
+					<button type="button" class="mui-btn bg-gray color-gray mg-r-10" @tap="clearPick">重置</button>
+					<button type="button" class="mui-btn bg-gray main-color" @tap="filterStudent">确定</button>
+				</div>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//关闭back、menu按键监听，这样侧滑主界面会自动获得back和memu的按键事件，仅在主界面处理按键逻辑即可；
+			mui.init({
+				keyEventBind: {
+					backbutton: false,
+					menubutton: false
+				}
+			});
+			var main = null;
+			var menuPage = function() {
+				var _m = {};
+				var self = _m;
+				self.getWebviewOpener = function() {
+//					main = plus.webview.currentWebview().opener();
+                       main = plus.webview.getWebviewById('../punch/index.html');
+                       
+				};
+				self.closeMenu = function() {
+					mui.fire(main, "menu:swiperight");
+				};
+				self.addEvent = function() {
+					window.addEventListener("swiperight", self.closeMenu);
+				};
+				self.init = function() {
+					self.addEvent();
+					self.getWebviewOpener();
+				};
+				return _m;
+			}
+			var vm = new Vue({
+				el: '#app',
+				data: {
+					seleType: 2,
+					kqTypeList: [{
+						value: '',
+						text: '全部'
+					},{
+						value: 1,
+						text: '正常'
+					}, {
+						value: 100,
+						text: ' 迟到'
+					}, {
+						value: 200,
+						text: '晚走'
+					},{
+						value: 300,
+						text: '重复'
+					},{
+						value:500,
+						text:'请假'
+					}],
+					kqStateList: [{
+						value: 1,
+						text: '进校'
+					}, {
+						value: 0,
+						text: '离校'
+					}],
+					leaveTypePick: {
+						name: '请选择',
+						id: null
+					},
+					statePick: {
+						name: '请选择',
+						id: null
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					filterStudent: function() {
+						mui.fire(main, "filter", {
+							value: JSON.stringify({
+								statesName:this.leaveTypePick.name,
+								type: this.leaveTypePick.id,
+								state: this.statePick.id,
+							})
+						});
+					},
+					clearPickAll: function(opt) {
+						if(opt) {
+							this[key].name = '请选择';
+							this[key].id = null;
+						} else {
+							this.statePick.name = '请选择';
+							this.statePick.id = null;
+							this.leaveTypePick.name= '请选择'
+						    this.leaveTypePick.id=null
+						         
+					         }
+						
+					},
+					clearPick: function() {
+						this.clearPickAll();
+					},
+					showLeaveTypePick: function() {
+						var that = this;
+						this.leaveTypePicker = new mui.PopPicker();
+						this.leaveTypePicker.setData(this.kqTypeList);
+						this.leaveTypePicker.show(function(items) {
+							that.leaveTypePick.name = items[0].text;
+							that.leaveTypePick.id = items[0].value;
+						});
+					},
+					showStatePick: function() {
+						var that = this;
+						this.statePicker = new mui.PopPicker();
+						this.statePicker.setData(this.kqStateList);
+						this.statePicker.show(function(items) {
+							that.statePick.name = items[0].text;
+							that.statePick.id = items[0].value;
+						});
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							menuPage().init();
+						})
+					}
+				}
+			})
+//			window.addEventListener('seleTypeEdit', function(e) {
+//				vm.seleType = e.detail.seleType;
+//			})
+		</script>
+	</body>
+
+</html>

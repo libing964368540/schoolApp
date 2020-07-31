@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		.mui-content {
+			padding: 25px 0;
+		}
+		
+		.mui-table-view-radio .mui-table-view-cell {
+			padding: 0.26rem 0.3rem;
+		}
+		
+		.mui-table-view-radio .mui-table-view-cell>a:not(.mui-btn) {
+			margin-right: -11px;
+		}
+		
+		.mui-table-view-radio .mui-table-view-cell .mui-navigate-right:after {
+			left: -200px;
+		}
+		
+		.mui-input-row {
+			position: relative;
+			z-index: 3;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<!--<h1 class="mui-title color-black">选择打分项</h1>-->
+		</header>
+		<div id="app">
+			<div class="top-title" style="top:44px">
+				<div class="mui-content-padded">
+					 <div class="web-title" >
+					       <h3 class="active mg-r-10" style="font-size: 36px;margin-left: 5px;">班级打分项</h3>
+				     </div>
+					<div class="search-input-box flex flex-y-center" style="box-shadow:1px 0px 9px #e4e2e2;height: 45px;">
+					   <i class="material-icons icon-greey" style="margin-left: 10px;font-size: 18px;">search</i>
+					   <form class="flex-1 flex flex-y-center" action="#" onsubmit="return false;">
+						     <input v-model="searchText" id="search-input" @keyup.13="search" type="search" class="mui-input-clear " placeholder="搜索">
+						     <i @tap="searchText = ''" v-show="searchText != ''" class="material-icons icon-greey" style="font-size: 20px;margin-right: 0.3rem;">cancel</i>
+					    </form>
+				     </div>
+				</div>
+			</div>
+				<div id="refreshContainer" class="mui-content mui-scroll-wrapper" style="margin-bottom: 20px;">
+					<div class="mui-scroll">
+						<ul class="mui-table-view" style="margin-top: 3.1rem;padding-left: 0.5rem;padding-right: 0.5rem;">
+							<!--<li class="mui-table-view-cell tc flex flex-y-center just-center" v-for="item in classScopeProject" @tap="indexSele = item"  style="border-bottom:1px solid #F3F5F8;text-align: left;padding:0.35rem 0;">-->
+							<li class="mui-table-view-cell tc flex flex-y-center just-center" v-for="item in classScopeProject" @tap="chooseAndBack(item)"  style="border-bottom:1px solid #F3F5F8;text-align: left;padding:0.35rem 0;">
+							<!--<li class="mui-table-view-cell tc flex flex-y-center just-center" v-for="item in classScopeProject" @tap="indexSele=item" @tap="seleIndexScoreDfx(item)" @tap="seleIndexScoreDfx(item)" style="border-bottom:1px solid #F3F5F8;text-align: left;padding:0.35rem 0;">-->	
+								<p v-text="item.name" class="FontSize17color"></p>
+								<i class="material-icons"  style="font-size: 20px;color: #2196F3;" v-if="indexSele == item">done</i>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!--<div class="mui-content-padded fixed" style="z-index: 3;">
+					<button @tap="quedingDfx" type="button" class="mui-btn mui-btn-primary school_btn">确定</button>
+				</div>-->
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: '#app',
+				data: {
+					classScopeProject: [],
+					indexSele: null,
+					page: 0,
+					size: 30,
+					count: 0,
+					seleIndexScore: null,
+					searchText: ''
+				},
+				mounted: function() {
+					this.plusReady();
+					this.pullUpinit();
+				},
+				methods: {
+					search: function() {
+						this.getClassScoreProject({
+							keyword: this.searchText
+						});
+					},
+					//直接选择打分项跳转页面
+					chooseAndBack:function(item){
+						this.indexSele=item;
+						var cid = plus.webview.currentWebview().opener();
+							mui.fire(cid, 'seleDfx', {
+								dfx: JSON.stringify(this.indexSele)
+							});
+							mui.back();
+					},
+					quedingDfx: function() {
+						if(this.indexSele) {
+							var cid = plus.webview.currentWebview().opener();
+							console.log(111);
+							mui.fire(cid, 'seleDfx', {
+								dfx: JSON.stringify(this.indexSele)
+							});
+							mui.back();
+						} else {
+							mui.toast('请选择打分项');
+							return;
+						}
+					},
+					seleIndexScoreDfx: function(item) {
+						this.seleIndexScore = item;
+					},
+					getClassScoreProject: function(opt) {
+						var that = this;
+						var parmas = {};
+						if(opt) {
+							parmas.keyword = opt.keyword;
+							this.page = 0;
+							this.classScopeProject = [];
+						}
+						parmas.page = this.page;
+						parmas.bind = 1;
+						parmas.size = 30;
+						parmas.free = 0;
+						if(this.page==0){
+							plus.nativeUI.showWaiting( "加载中..." )
+						}
+						getClassScoreProjectapi({
+							data: parmas,
+							success: function(data) {
+								that.page += 1;
+								that.count = data.data.count;
+								data.data.list.forEach(function(item) {
+									that.classScopeProject.push(item);
+								})
+
+								if(that.count == that.classScopeProject.length) {
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+								} else {
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+								}
+							}
+						})
+					},
+					pullUpRefresh: function() {
+						this.getClassScoreProject();
+					},
+					pullUpinit: function() {
+						mui.init({
+							pullRefresh: {
+								container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+								up: {
+									height: 50, //可选.默认50.触发上拉加载拖动距离
+									contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+									contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+									callback: this.pullUpRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+								}
+							}
+						});
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.getClassScoreProject();
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

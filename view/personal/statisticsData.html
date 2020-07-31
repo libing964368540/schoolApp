@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+		<style>
+			.Echars_pic{
+				margin-top:1rem;
+				padding: 1rem 0;
+			}
+			.Echars_pic .pic{
+				padding: 0 0.5rem;
+			}
+			.Echars_pic p.title{
+				font-size: 16px;
+				color: #101010;
+				text-align: center;
+				font-weight: bold;
+				padding: 0 0.5rem;
+			}
+			.Total{
+				line-height: 0.6rem;
+				padding: 0 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<div class="tr" style="margin-right:10px;margin-top: 0.3rem;position: relative;height: 30px;">
+				     <i class="material-icons" id="shaixuan" style="font-size: 30px;color: #444444;position: absolute;right: 0;top:-6px">more_horiz</i>
+				</div>
+			</header>
+			<div class="top-title erji">
+				<div class="web-title" style="padding-left:0.2rem;;">
+					<span class="active mg-r-10" style="font-size: 36px;color: #444444;">数据汇总</span>
+				</div>
+			</div>
+			<div class="mui-content Echars_pic">
+				<div class="pic">
+					<div id="pproject_Add" style="width:6.5rem;height: 5.4rem;"></div>
+					<p class="title">加分情况</p>
+				</div>
+				 <ul id="pproject_Add_M" class="Total"></ul>
+				<div class="pic">
+					<div id="pproject_reduce" style="width:6.5rem;height: 5.4rem;"></div>
+					<p class="title">扣分情况</p>
+				</div>
+				<ul id="pproject_reduce_M" class="Total"></ul>
+			</div>
+		</div>
+		<script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/echarts.min.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/user.js"></script>
+		<script type="text/javascript">
+			var stuentPage = function() {
+				var _m = {};
+				var self = _m;
+				var main = plus.webview.currentWebview();
+				var menu;
+				var mask;
+				var showMenu = false;
+
+				self.showCelan = function() {
+					document.getElementById("shaixuan").addEventListener("tap", function() {
+						self.openMenu();
+					});
+				};
+				self.closeMenu = function() {
+					//窗体移动
+					self._closeMenu();
+					//关闭遮罩
+					mask.close();
+				};
+				self._closeMenu = function() {
+					if(showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "fixed";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "44px";
+						}
+						main.setStyle({
+							left: '0',
+							transition: {
+								duration: 1500
+							}
+						});
+						//menu页面同时移动
+						menu.setStyle({
+							left: '100%',
+							transition: {
+								duration: 150
+							}
+						});
+						//等窗体动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+						showMenu = false;
+					}
+				};
+				self.openMenu = function() {
+					if(!showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "static";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "0px";
+						}
+
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						//显示完毕后，根据不同动画效果移动窗体；
+						menu.show('none', 0, function() {
+							main.setStyle({
+//								left: '-70%',
+								transition: {
+									duration: 1500
+								}
+							});
+							menu.setStyle({
+								left: '30%',
+								transition: {
+									duration: 150
+								}
+							});
+						});
+						//显示主窗体遮罩
+						mask.show();
+						showMenu = true;
+					}
+				}
+				self.getCelanWebview = function() {
+					setTimeout(function() {
+						menu = mui.preload({
+							id: 'offcanvas-drag-right-plus-menuforScoreTotal.html',
+							url: 'offcanvas-drag-right-plus-menuforScoreTotal.html',
+							styles: {
+								left: "30%",
+								width: '70%',
+								zindex: 9997
+							}
+						});
+					}, 300);
+				};
+				self.meuiSet = function() {
+					//重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+					mui.menu = function() {
+						if(showMenu) {
+							self.closeMenu();
+						} else {
+							self.openMenu();
+						}
+					}
+				};
+				self.watchMenu = function() {
+					window.addEventListener("filter", function(event) {
+						var opt = JSON.parse(event.detail.value);   
+						self.closeMenu();
+						vm.echarsInit({
+							majorGroup_id:opt.majorGroupId,
+							grade:opt.grade,
+							classgrade_id:opt.majorId
+						})
+					});
+				};
+				self.init = function() {
+					mask = mui.createMask(self._closeMenu);
+					self.getCelanWebview();
+					self.showCelan();
+					self.meuiSet();
+					self.watchMenu();
+				};
+				return _m;
+			}
+			vm = new Vue({
+				el: '#app',
+				data: {
+
+				},
+				mounted: function() {
+					mui.init();
+					this.plusReady();
+
+				},
+				methods: {
+					//初始化得分汇总
+					echarsInit: function(opt) {
+						var that = this;
+						var params = {};
+						if(opt){
+							if(opt.majorGroup_id){params.majorGroup_id=opt.majorGroup_id};
+							if(opt.grade){params.grade=opt.grade};
+							if(opt.classgrade_id){params.classgrade_id=opt.classgrade_id};
+						}
+						getPerformanceScale({
+							data: params,
+							success: function(result) {
+								var projects = []
+								projects = result.data.projects;
+								var add_Total = 0;
+								var reduce_Total = 0;
+								var arr_reduce = [{
+										value: 0,
+										name: '科学精神'
+									}, {
+										value: 0,
+										name: '学会学习'
+									},
+									{
+										value: 0,
+										name: '人文底蕴',
+									}, {
+										value: 0,
+										name: '实践创新'
+									},
+									{
+										value: 0,
+										name: '责任担当'
+									}, {
+										value: 0,
+										name: '健康生活'
+									}
+								];
+								var arr_add = [{
+										value: 0,
+										name: '科学精神'
+									}, {
+										value: 0,
+										name: '学会学习'
+									},
+									{
+										value: 0,
+										name: '人文底蕴'
+									}, {
+										value: 0,
+										name: '实践创新'
+									},
+									{
+										value: 0,
+										name: '责任担当'
+									}, {
+										value: 0,
+										name: '健康生活'
+									}
+								];
+
+								/*通过接口数据计算总数*/
+								projects.forEach(function(item) {
+									if(item['project_id'] != 0) {
+							            add_Total += item.add_value 
+								        reduce_Total += item['subtract_value'];
+										that.fill_score(item, arr_reduce, arr_add, add_Total, reduce_Total);
+										
+									}
+								})
+								that.$nextTick(function() {
+									const add = this.Piechart('pproject_Add', arr_add);
+									const reduce = this.Piechart('pproject_reduce', arr_reduce);
+								})
+								 $('.Total').empty();
+                                 that.fill_Message(arr_add,arr_reduce,add_Total,reduce_Total);
+							}
+						})
+					},
+					//填充数据
+					fill_score: function(project, arr_reduce, arr_add) {
+						switch(project.project_name) {
+							case '科学精神':
+								arr_add[0].value = Number(project.add_value)
+								arr_reduce[0].value = Number(project.subtract_value)
+								break;
+							case '学会学习':
+								arr_add[1].value = Number(project.add_value)
+								arr_reduce[1].value = Number(project.subtract_value)
+								break;
+							case '人文底蕴':
+								arr_add[2].value = Number(project.add_value)
+								arr_reduce[2].value = Number(project.subtract_value)
+								break;
+							case '实践创新':
+								arr_add[3].value = Number(project.add_value)
+								arr_reduce[3].value = Number(project.subtract_value)
+								break;
+							case '责任担当':
+								arr_add[4].value = Number(project.add_value)
+								arr_reduce[4].value = Number(project.subtract_value)
+								break;
+							case '健康生活':
+								arr_add[5].value = Number(project.add_value)
+								arr_reduce[5].value = Number(project.subtract_value)
+								break;
+						}
+					},
+					//通过数据绘画饼图
+					Piechart: function(ids, arr) {
+						var table_echarts = echarts.init(document.getElementById(ids));
+						option = {
+							title: {
+								text: '',
+								subtext: '',
+								x: 'center',
+								bottom: '-5',
+								textStyle: {
+									//文字颜色
+									color: '#000',
+									//字体风格,'normal','italic','oblique'
+									fontStyle: 'normal',
+									fontWeight: 'normal',
+									//字体大小
+									fontSize: 16
+								}
+							},
+							tooltip: {
+								trigger: 'item',
+								formatter: "{a} <br/>{b} : {c} ({d}%)"
+							},
+							series: [{
+								name: '核心素养',
+								type: 'pie',
+								radius: '55%',
+								center: ['50%', '60%'],
+								data: arr,
+								itemStyle: {
+									emphasis: {
+										shadowBlur: 10,
+										shadowOffsetX: 0,
+										shadowColor: 'rgba(0, 0, 0, 0.5)'
+									}
+								}
+
+							}]
+						};
+						table_echarts.setOption(option);
+					},
+                    //初始化
+                    
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.echarsInit();
+							stuentPage().init();
+						})
+					},
+					  //填充得分明细
+                  fill_Message:function (arr_add,arr_reduce,add_Total,reduce_Total) {
+                    var colors=['#c23531','#2f4554','#61a0a8','#d48265','#91c7ae','#749f83'];
+                    var dom='';
+                    var resuce_dom='';
+                if(arr_add){
+                    for(var i=0;i<arr_add.length;i++){
+                        if(add_Total){
+                            var num_X=arr_add[i].value*100/add_Total;
+                            if( String(num_X).indexOf(".")>-1){
+                                var num=num_X.toFixed(2)+'%'
+                            }else {var num=num_X+'%'}
+                        }else {
+                            var num='0%'
+                        }
+                        dom+='<li style="color:'+colors[i]+'">'+arr_add[i].name+'：加'+arr_add[i].value+'分，占比'+num+'。</li>'
+                    }
+                    $('#pproject_Add_M').prepend(dom);
+                }
+                if(arr_reduce){
+                    for(var i=0;i<arr_reduce.length;i++){
+                        if(reduce_Total){
+                            var num_X=arr_reduce[i].value*100/reduce_Total;
+                            if( String(num_X).indexOf(".")>-1){
+                                var num=num_X.toFixed(2)+'%'
+                            }else {
+                                var num=num_X+'%'
+                            }
+                        }else {
+                            var num='0%'
+                        }
+                        resuce_dom+='<li style="color:'+colors[i]+'">'+arr_reduce[i].name+'：扣'+arr_reduce[i].value+'分，占比'+num+'。</li>'
+                    }
+                    $('#pproject_reduce_M').prepend(resuce_dom);
+                }
+
+				}
+                 }
+			})
+		</script>
+	</body>
+
+</html>

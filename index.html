@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/lib/lib.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
+	</head>
+	<style>
+		.mui-tab-label {
+			margin-top: -4px;
+			font-size: 8px;
+		}
+		nav.mui-bar{
+		   box-shadow: 0 0 1px rgba(193,193,193,.85);	
+		}
+	</style>
+	<body>
+		<nav class="mui-bar mui-bar-tab" id="app-footer-menu">	
+			<a id="scool-nowState" class="mui-tab-item mui-active" href="view/nowState/index.html" >
+				<i class="mui-icon material-icons">equalizer</i>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a id="school-student" class="mui-tab-item " href="view/students/index.html">
+				<i class="mui-icon material-icons"id="school-student_icon">school</i>
+				<span class="mui-tab-label" id="school-student_content">学生</span>
+			</a>
+			<a id="scool-class" class="mui-tab-item" href="view/classes/index.html">
+				<i class="mui-icon material-icons">group</i>
+				<span class="mui-tab-label">班级</span>
+			</a>
+		
+			<!--<a id="leave" class="mui-tab-item" href="view/leave/index.html">
+				<i class="mui-icon material-icons">event_available</i>
+				<span class="mui-tab-label">请假</span>
+			</a>-->
+			<!--<a id="school-duty" class="mui-tab-item" href="view/duty/index.html">
+				<i class="mui-icon material-icons">timelapse</i>
+				<span class="mui-tab-label">晚修</span>
+			</a>-->
+			<a class="mui-tab-item" href="view/personal/index.html">
+				<i class="mui-icon material-icons">person_pin</i>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+//			var subpages = ['view/students/index.html', 'view/classes/index.html', 'view/leave/index.html','view/duty/index.html', 'view/personal/index.html'];
+//          var subpages = ['view/students/index.html', 'view/classes/index.html','view/nowState/index.html' ,'view/leave/index.html', 'view/personal/index.html'];
+//			var subpages = ['view/nowState/index.html','view/students/index.html', 'view/classes/index.html','view/leave/index.html', 'view/personal/index.html'];
+            var subpages = ['view/nowState/index.html','view/students/index.html', 'view/classes/index.html','view/personal/index.html'];
+			var subpage_style = {
+				top: '0px',
+				bottom: '51px'
+			};
+			var aniShow = {};
+			function tabInit() {
+				var role = JSON.parse(plus.storage.getItem('indexRole')).key;
+				if(role.indexOf('6') >= 0 || role.indexOf('5') >= 0 || role.indexOf('9') >= 0 || role.indexOf('10') >= 0 || role.indexOf('11') >= 0||role.indexOf('7') >= 0) {
+//					document.getElementById('leave').style.display = 'none';
+//					subpages.splice(2, 1); //不去加载请假的接口数据
+//                  subpages.splice(3, 1); //不去加载请假的接口数据
+				}
+				if(role.indexOf('6') >= 0 || role.indexOf('5') >= 0||role.indexOf('7') >= 0) {
+					document.getElementById('scool-class').style.display = 'none';
+					subpages.splice(2, 1); //不去加载班级的接口数据
+				}
+				if(role.indexOf('6') >= 0 || role.indexOf('7') >= 0) {
+					document.getElementById('school-student').setAttribute('href','view/student/index.html')
+					subpages[1]='view/student/index.html';
+					document.getElementById('school-student_content').innerHTML="核心素养";
+					document.getElementById('school-student_icon').innerHTML="local_activity";
+					document.getElementById('scool-nowState').style.display = 'none';
+					subpages.splice(0, 1); //不去汇总接口
+					document.getElementById('scool-nowState').classList.remove('mui-active');
+					document.getElementById('school-student').classList.add('mui-active');
+				}
+				
+				//如果是班主任或者副班主任权限下显示点击班级导航直接显示自己班级的打分情况
+				if(role.indexOf('4') >-1 || role.indexOf('12') >-1||role.indexOf('13') >-1) {
+					document.getElementById('scool-class').setAttribute('href','view/classes/classdetail.html');
+					subpages[2]='view/classes/classdetail.html';
+				}
+			};
+			mui.plusReady(function() {
+				if(mui.os.ios) { //判断是ios还是安卓设备
+					ws = plus.webview.currentWebview();
+					ws.setStyle({
+						'popGesture': 'none'
+					}); //ios关闭右划
+				}
+				if(mui.os.android) {
+					//安卓按两次关闭app
+					var clickNum = 0;
+					mui.back = function(event) {
+						clickNum++;
+						if(clickNum == 2) {
+							plus.runtime.quit();
+						} else {
+							mui.toast("再按一次退出应用");
+						}
+						setTimeout(function() {
+							clickNum = 0;
+						}, 1500);
+						return false;
+					}
+				}
+				if(!plus.storage.getItem('token')) {
+					mui.openWindow({
+						url: "view/login/login.html",
+						id: "login",
+						styles: {
+							top: 0, //新页面顶部位置
+							bottom: 0, //新页面底部位置
+						},
+					})
+				} else {
+					
+					tabInit();
+					var self = plus.webview.currentWebview();
+					for(var i = 0; i < subpages.length; i++) {
+						
+						var temp = {};
+			
+						var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+						if(i > 0) {
+							sub.hide();
+						} else {
+							temp[subpages[i]] = "true";
+							mui.extend(aniShow, temp);
+						}
+						self.append(sub);
+					}
+					//当前激活选项
+					var activeTab = subpages[0];
+					//选项卡点击事件
+					mui('.mui-bar-tab').on('tap', 'a', function(e) {
+						var targetTab = this.getAttribute('href');
+						if(targetTab == activeTab) {
+							return;
+						}
+						//显示目标选项卡
+						//若为iOS平台或非首次显示，则直接显示
+						if(mui.os.ios || aniShow[targetTab]) {
+							plus.webview.show(targetTab);
+						} else {
+							//否则，使用fade-in动画，且保存变量
+							var temp = {};
+							temp[targetTab] = "true";
+							mui.extend(aniShow, temp);
+							plus.webview.show(targetTab, "fade-in", 300);
+						}
+						var id = plus.webview.getWebviewById(targetTab);
+						mui.fire(id, 'tabPageShow', {});
+						//隐藏当前;
+						plus.webview.hide(activeTab);
+						//更改当前活跃的选项卡
+						activeTab = targetTab;
+					});
+				}
+				 plus.navigator.setStatusBarStyle("UIStatusBarStyleBlackOpaque");
+	             plus.navigator.setStatusBarBackground('#FFFFFF');//设置状态栏的颜色
+	             plus.navigator.setStatusBarStyle("dark")
+			})
+			
+			window.addEventListener('refresh', function(e) { //执行刷新
+				location.reload();
+			});
+			window.addEventListener('hideMenu', function() { //执行刷新
+				document.getElementById('app-footer-menu').style.display = 'none';	
+			});
+			window.addEventListener('showMenu', function() { //执行刷新
+				document.getElementById('app-footer-menu').style.display = 'block';
+			});
+			 // 获取视图原始高度
+            var screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;;
+// 为window绑定resize事件
+            window.onresize = function () {
+                var nowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+                if (nowHeight < screenHeight) {
+                    document.getElementById('app-footer-menu').style.display = 'none';
+                    // 将底部弹起的按钮隐藏（可使用给按钮添加相应消失类）
+                } else {
+                  document.getElementById('app-footer-menu').style.display = 'block';
+                    // 将按钮正常显示（可使用给按钮移除相应消失类）
+               }
+            }
+            
+		</script>
+	</body>
+
+</html>

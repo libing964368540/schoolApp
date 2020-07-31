@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body,
+		#app {
+			background: #FFFFFF;
+		}
+		.web-title {
+			margin: 1rem 0.68rem 1rem;
+		}
+		.AgreementWrap{
+		   padding:0.3rem 0.5rem;
+		   position: relative;
+		   padding-left: 1.2rem;
+		   font-size: 14px;
+		   color: #b3b3b3;
+		}
+		.AgreementWrap i.material-icons{
+			position: absolute;
+			left: 0.6rem;
+			top:0.28rem;	
+		}
+		.AgreementWrap i.material-icons.active{
+			color: #2196F3;
+		}
+		.AgreementWrap span.AgreementBtn{
+			color: #2196F3;
+		}
+		.mui-table-view:before,
+		.mui-table-view:after,
+		.mui-input-group .mui-input-row:after,
+		.mui-table-view-cell:after {
+			height: 1px!important;
+		}
+		
+		.mui-input-row label {
+			padding: 0.16rem 0;
+			width: 15%;
+		}
+		
+		.mui-input-row label~input,
+		.mui-input-row label~select,
+		.mui-input-row label~textarea {
+			width: 85%;
+		}
+		
+		input {
+			border-top: none!important;
+			border-left: none!important;
+			border-right: none!important;
+			border-radius: 0px!important;
+			/*border-bottom: 1px solid #eeeeee;*/
+			padding-left: 0!important;
+			font-size: 17px;
+		}
+		#app .mui-input-group .mui-input-row:after, .mui-input-group .mui-input-row:after {
+			background-color: #FFFFFF;
+		}
+		::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #b6b6b6!important;
+		}
+		
+		:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #b6b6b6!important;
+		}
+		
+		::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #b6b6b6!important;
+		}
+		
+		:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #b6b6b6!important;
+		}
+		
+		.from {
+			padding: 0 0.68rem;
+		}
+		
+		.from .from-line {
+			margin-bottom: 0.9rem;
+		}
+		.registerBtn span{
+			display: inline-block;
+			width: 100%;
+			border-radius: 5px;
+			line-height: 45px;
+			font-size: 17px;
+			margin-top: 20px;
+			padding: 0;
+			border: none;
+			color: #FFFFFF;
+			background: #e1e1e1;	
+		}
+		.registerBtn span.active{
+			background: #2196F3;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+			    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		  </header>
+		<div class="mui-content">
+			<div class="web-title">
+				<span class="active mg-r-10" style="font-size: 36px;color: #444444;">注册账户</span>
+			</div>
+			<div class="from mui-input-group">
+				<!--<div class="from-line mui-input-row">
+					<div style="width: 100%;padding: 0.25rem 0;position: relative;" @tap="showTypePick" class="flex">
+						<span style="color: #B6B6B6;display: inline-block;">选择身份</span>
+						<span v-text="powerName"style="display: inline-block;font-size: 16px;margin-left:15px ;"></span>
+					    <i class="material-icons color-gray" :style="{color: '#101010',position: 'absolute',top:'0.22rem',left:powerName=='教职工'?'2.6rem':'2.3rem'}">chevron_right</i>
+					</div>
+					
+				</div>-->
+			
+				<div class="from-line mui-input-row">
+					<input v-model="value2Computed" type="text" placeholder="请输入用户名" autocapitalize="off" autocorrect="off" @input="fillUsername">
+				</div>
+				<div class="from-line mui-input-row">
+					<input v-model="pwd" type="password" placeholder="请输入密码">
+				</div>
+				<div class="from-line mui-input-row">
+					<input v-model="oldpwd" type="password" placeholder="再次输入密码">
+				</div>
+			</div>
+			<div class="tc from registerBtn">
+				<span :class="{'active':IsRegister}" @tap="sl_register">下一步</span>
+			</div>
+            <div class="AgreementWrap"><i :class="{'material-icons':true,'active':IsRead}" v-text="IsRead?'check_box':'check_box_outline_blank'" @tap="setRead">check_box_outline_blank</i><span>同意</span><span class="AgreementBtn" @tap="showView('Notice.html')">《用户服务协议》</span></div> 
+		</div>
+		</div>
+		
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/api/req.js?v=2"></script>
+		<script src="../../js/api/login.js"></script>
+		<script src="../../js/lib/lib.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				new Vue({
+					el: '#app',
+					data:function() {
+						return {
+							userName: '',
+							pwd: '',
+							oldpwd:'',
+							powerId:'6',
+							powerName:'学生',
+							IsRegister:false,
+							IsRead:false
+						}
+					},
+					mounted: function() {
+						this.plusReady();
+					},
+                    computed : {
+                         value2Computed : {
+                                 get: function(){
+                                    return this.userName;
+                                    },
+                                 set : function(val){
+                                     this.userName = val.toLowerCase();
+                                    }
+                               }
+                   },
+					methods: {
+						plusReady: function() {
+							 var that = this;
+							 mui.plusReady(function() {
+							 	that.ScoreTypeList();
+							 })	
+						},
+						//输入用户名
+						fillUsername:function(){
+							if($.trim(this.userName)&&this.IsRead){
+								this.IsRegister=true;
+							}else{
+								this.IsRegister=false;
+							}
+						},
+						//选择阅读用户协议
+						setRead:function(){
+							this.IsRead=!this.IsRead;
+							if($.trim(this.userName)&&this.IsRead){
+								this.IsRegister=true;
+							}else{
+								this.IsRegister=false;
+							}
+						},
+						//选择身份类型
+						showTypePick: function() {
+					        	var that = this;
+						       this.ScoreTypePicker.show(function(items) {
+							        that.powerName= items[0].text;
+							        that.powerId= items[0].value;       
+						         });
+					       },
+						//初始化身份类型
+						ScoreTypeList: function() {
+							this.ScoreTypePicker = new mui.PopPicker();
+							var arr = [{value:'6',text:'学生'}]
+							this.ScoreTypePicker.setData(arr);
+							},
+						//注册新账户
+						sl_register:function(){
+							var that = this;
+							if(!this.IsRegister){
+								return;
+							}
+							var reg=/^[0-9a-z]+$/
+							if(!reg.test(this.userName)){
+								new fui({
+									text: '用户名不能空或格式不正确',
+									bg: '#FF4747'
+								})
+								return;
+							}
+							if(!reg.test(this.pwd)){
+								new fui({
+									text: '密码不能空或格式不正确',
+									bg: '#FF4747'
+								})
+								return;
+							}
+							if(!reg.test(this.oldpwd)&&this.pwd==this.oldpwd){
+								new fui({
+									text: '请再次输入正确密码',
+									bg: '#FF4747'
+								})
+								return;
+							}
+							plus.nativeUI.showWaiting( "注册中..." )
+							const params={
+								 username: this.userName,
+                                 password: this.pwd,
+//                                   iids: this.powerId
+							}
+							createUser({
+								data:params,
+								success:function(){
+									mui.toast('注册成功');
+									var old_back = mui.back;
+									    old_back();
+									main = plus.webview.currentWebview().opener();
+									mui.fire(main, 'loadpageLogin',{
+							              value: JSON.stringify({
+								                userName: that.userName,
+								                password: that.pwd
+							             })
+								      })
+								
+							}
+							})
+							
+						},
+						back: function() {
+					 	   var that = this;
+						   
+				    	},
+						showView : function(path){
+						    mui.openWindow({
+								url: path,
+								id: path,
+								extras: {
+									name: this.title
+								}
+							})
+						    this.IsRead=true;
+						    if($.trim(this.userName)&&this.IsRead){
+								this.IsRegister=true;
+							}else{
+								this.IsRegister=false;
+							}
+						}
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

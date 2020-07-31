@@ -1,0 +1,441 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		h4 {
+			padding: 25px 0 0px;
+			margin-bottom: 0.1rem;
+			font-weight: initial;
+			color: #101010;
+			font-size: 14px;
+			font-weight: 600;
+		}
+		
+		textarea {
+			font-size: 14px;
+			border: none;
+			border-bottom: 1px solid #F3F5F8;
+			padding-left: 0;
+		}
+		
+		.mui-checkbox.mui-left input[type=checkbox],
+		.mui-radio.mui-left input[type=radio] {
+			left: 15px;
+		}
+		
+		#app ul {
+			padding-bottom: 0.2rem;
+			border-bottom: 1px solid #F3F5F8;
+		}
+		
+		ul li {}
+		
+		.mui-table-view-cell.score {
+			padding: 0.1rem 0;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			</header>
+			<div class="top-title erji">
+				<div class="web-title" style="padding-left:0.2rem;;">
+					<span class="active mg-r-10" style="font-size: 36px;color: #101010;">学生打分</span>
+				</div>
+			</div>
+			<div class="mui-content" style="margin-top: 1.5rem; padding-left:0.5rem;padding-right: 0.5rem;">
+				<h4>被打分学生</h4>
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell score">
+						<div @tap="showView('selectStudents.html')" class="flex flex-y-center">
+							<div class="flex-1" style="">
+								<span class="color-gray FontSize17" v-if="seleScoreStudentList.length == 0">请选择被打分人</span>
+								<span class="font-size-big" v-else style="font-size: 17px;">
+								<span v-for="item in seleScoreStudentList" v-text="item.accountData.rname + ' '" class="FontSize17color"></span>
+								</span>
+							</div>
+							<div class=" flex flex-y-top just-center">
+								<i class="material-icons color-gray">chevron_right</i>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<div v-if="role==4||role==12||role==13">
+					<h4>选择类型</h4>
+				    <ul class="mui-table-view mui-table-view-chevron h0">
+					   <li class="mui-table-view-cell score">
+						<div class="flex flex-y-center just-center" @tap="showTypePick">
+							<p v-if="seleScoreType.name" v-text="seleScoreType.name" class="FontSize17color"></p>
+							<span class="color-gray FontSize17" v-else>请选择类型</span>
+							<div class=" flex flex-y-top just-center">
+								<i class="material-icons color-gray">chevron_right</i>
+							</div>
+					    </li>
+				    </ul>
+				</div>
+				
+				<h4>打分项</h4>
+				<ul class="mui-table-view mui-table-view-chevron h0">
+					<li class="mui-table-view-cell score">
+						<div @tap="ScoreprojectForType" class="flex flex-y-center just-center">
+							<p v-if="seleScoreObj.name" v-text="seleScoreObj.name" class="FontSize17color"></p>
+							<span class="color-gray FontSize17" v-else>请选择打分项</span>
+							<div class=" flex flex-y-top just-center">
+								<i class="material-icons color-gray">chevron_right</i>
+							</div>
+					</li>
+				</ul>
+				<form class="mui-input-group" style="border-bottom: 1px solid #F3F5F8;padding-bottom: 0.2rem;" v-if="seleScoreObj.rules">
+					<div class="flex flex-y-center just-center" v-for="(item,index) in seleScoreObj.rules" @tap="seleIndex(item)">
+						<div class="mui-checkbox mui-left">
+							<label style="padding:0.4rem 0;padding-left: 0.8rem;" class="FontSize17color"><span v-text="item.name"></span>&nbsp;<span v-text="getScoreText(item,index)"style="width: 4rem;"></span></label>
+							<input name="checkbox1" value="Item 1" type="checkbox" :checked="item.isSele == 0 ? false : true" style="left: 0;top: 30%!important;">
+						</div>
+						<!--<p style ="padding:0.4rem 0;" class="FontSize17color"><a :id="'openPopover'+'_'+index" class="" @tap.stop="Popover(item,index)"><i class="material-icons" style="display:inline-block;font-size: 16px;color: #2196F3;vertical-align: middle;margin-right: 10px;" >attach_file</i></a><span v-text="item.name"></span>&nbsp;<span v-text="getScoreText(item,index)"style="width: 4rem;"></span>分</p>-->
+						<p style="width: 0.7rem;text-align: right;" @tap.stop="Popover(item,index)">
+							<i class="material-icons" style="font-size: 20px;color: #2196F3;" :id="'openPopover'+'_'+index" v-if="item.bind_rule_id&&item.bind_rule_name">attach_file</i>
+						</p>
+					</div>
+				</form>
+				<div id="popover_1" class="mui-popover">
+					<p style="color: #747474;padding: 5px" v-text="rulesName"></p>
+				</div>
+				<!--班级打分分值-->
+				<div class="" v-if="seleScoreType.id==2">
+					 <h4>打分分值</h4>
+					  <!--<ul class="mui-table-view mui-table-view-chevron h0">
+					   <li class="mui-table-view-cell score">
+						<div class="flex flex-y-center just-center" @tap="setScoreValueForClassgrade">
+							<p v-if="ScoreValue.name" v-text="ScoreValue.name" class="FontSize17color"></p>
+							<span class="color-gray FontSize17" v-else>请选择分值</span>
+							<div class=" flex flex-y-top just-center">
+								<i class="material-icons color-gray">chevron_right</i>
+							</div>
+					    </li>
+				    </ul>-->
+				    <textarea v-model="ScoreValueName" name="" rows="" cols="" placeholder="可输入分值" style="font-size: 17px;"></textarea>
+				</div>
+				<h4>打分时间</h4>
+				<ul class="mui-table-view mui-table-view-chevron" @tap="seleTime">
+					<li class="mui-table-view-cell score">
+						<div class="flex flex-y-center just-center">
+							<p class="FontSize17color" v-text="time"></p>
+							<div class=" flex flex-y-top just-center">
+								<i class="material-icons color-gray">chevron_right</i>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<h4>备注</h4>
+				<textarea v-model="annotation" name="" rows="" cols="" placeholder="可输入备注" style="font-size: 17px;"></textarea>
+				<div class="" style="padding-top: 25px;padding-bottom: 25px;">
+					<button @tap="godafen" type="button" class="mui-btn mui-btn-primary school_btn">提交</button>
+				</div>
+				</div>
+			</div>
+            <script src="../../js/jquery-1.12.4.min.js"></script>
+			<script src="../../js/mui.js"></script>
+			<script src="../../js/mui.picker.js"></script>
+		    <script src="../../js/mui.poppicker.js"></script>
+		    <script src="../../js/user/role.js"></script>
+			<script src="../../js/vue.js"></script>
+			<script src="../../js/api/req.js"></script>
+			<script src="../../js/api/student.js"></script>
+			<script type="text/javascript">
+				function buqi(str) {
+					return str < 10 ? '0' + str : str;
+				}
+				mui.plusReady(function() {
+					var self = plus.webview.currentWebview();
+					var vm = new Vue({
+						el: '#app',
+						mixins: [userRole],
+						data: {
+							ScoreValue:{
+								id:'',
+								name:''
+							},//班级打分分值
+							seleScoreType:{
+								id:'1',
+								name:'核心素养'
+							},//打分类型
+							seleScoreStudentList: [],
+							seleScoreObj: {},
+							annotation: '',
+							time: new Date().getFullYear() + "-" + buqi(new Date().getMonth() + 1) + "-" + buqi(new Date().getDate()),
+							timeSjc: '',
+							rulesName: '',
+							ScoreValueName:''//班内打分可填写的分值
+						},
+						mounted: function() {
+							this.timeSjc = new Date(this.time.replace(/-/g, '/')+' 00:00:00').getTime();
+							this.ScoreTypeList();
+							this.role = getUserRole();
+						},
+						methods: {
+							//选择打分类型
+							showTypePick: function() {
+					        	var that = this;
+						       this.ScoreTypePicker.show(function(items) {
+							        that.seleScoreType.name = items[0].text;
+							        that.seleScoreType.id = items[0].value;
+							        //在更换选择类型时候初始化打分项和打分规则的数据
+							        that.seleScoreObj={}//核心素养和班内打分项的清空
+							        that.ScoreValue = {
+								         id:'',
+								         name:''
+							           }//班级打分分值            
+						         });
+					        },
+							//选择打分类型的初始化数据
+							ScoreTypeList: function() {
+								this.ScoreTypePicker = new mui.PopPicker();
+								var arr = [{value:1,text:'核心素养'},{value:2,text:'班内打分'}]
+								this.ScoreTypePicker.setData(arr);
+							},
+							//通过打分类型的选择分配打分项
+							ScoreprojectForType:function(){
+								if(this.role==4||this.role==12){
+									if(this.seleScoreType.id==2){
+									   this.showView('scoreObjectForClassgrade.html');	
+									}else if(this.seleScoreType.id==1){
+									   	this.showView('scoreObject.html');
+									}else{
+										mui.toast('请先选择打分类型')
+									}
+								 }else{
+									this.showView('scoreObject.html');
+								}
+							},
+							//设置班内打分分值的初始化
+							setScoreValueForClassgrade:function(){
+								var that = this;
+								if(!this.seleScoreObj.id){mui.toast('请选择班内打分项');return}
+								this.ScoreValuePicker = new mui.PopPicker();
+								if(this.seleScoreObj.id%2==0){
+                                     var arr=[{value:-1,text:-1},{value:-2,text:-2},{value:-3,text:-3},{value:-4,text:-4},{value:-5,text:-5},{value:-6,text:-6},{value:-7,text:-7},{value:-8,text:-8},{value:-9,text:-9},{value:-10,text:-10}]
+                                  }else {
+                                     var arr=[{value:1,text:1},{value:2,text:2},{value:3,text:3},{value:4,text:4},{value:5,text:5},{value:6,text:6},{value:7,text:7},{value:8,text:8},{value:9,text:9},{value:10,text:10}]
+                                   }
+								this.ScoreValuePicker.setData(arr);
+								 this.ScoreValuePicker.show(function(items) {
+							        that.ScoreValue.name = items[0].text;
+							        that.ScoreValue.id = items[0].value;
+						         });
+							},
+							//获取绑定的班级打分项和规则
+							Popover: function(item, index) {
+								var that=this;
+								var params = {
+									ruleID: item.id
+								};
+								plus.nativeUI.showWaiting("加载中...")
+								getRuleForStudentRules({
+									data: params,
+									success: function(result) {
+										var data = result.data;
+										var rule = data.rule;
+										var names = ''
+										if(rule.operation == 1) {
+											names = rule.name + '+' + rule.value;
+										} else if(rule.operation == 2) {
+											names = rule.name + '-' + rule.value;
+										}
+										
+										that.rulesName = '班打分项：'+data.project.name+'，规则：'+names;
+										mui('.mui-popover').popover('show', document.getElementById('openPopover_' + index));						
+									}
+								})	
+							},
+							//批量班内打分接口的调用
+							MoreScoreForClassgrade:function(){
+							    //1.判断打分项是否选择   2.打分分值是否选择
+							    if(this.seleScoreObj.name){
+							    	if(this.ScoreValueName){
+							    		plus.nativeUI.showWaiting("提交中...")
+							    		 var params = {                                 
+                                                student_account_ids: this.getSeleStudentId().join('-'),
+                                                project_id:this.seleScoreObj.id,
+                                                value:this.ScoreValueName,
+                                                annotation: this.annotation,
+											    time: this.timeSjc,
+                                                  }
+							    		MoreScoreForClassgrade({
+							    			data:params,
+							    			success:function(data){
+							    				plus.storage.setItem('scopeSuccBack', JSON.stringify({
+													url: '../students/index.html',
+													id: 'view/students/index.html'
+												}));
+												mui.openWindow({
+													url: '../component/score-succ.html',
+													id: 'score-succ.html',
+												});
+							    			},error:function(){
+							    				
+							    			}
+							    			
+							    		})
+							    	}else{
+							    		 mui.toast('请输入分值');
+								         return;
+							    	}
+							    	
+							    }else{
+							       mui.toast('请选择打分项');
+								   return;
+							    }
+							},
+							//批量给学生的核心素养打分
+							MoreScoreForTree:function(){
+								if(this.seleScoreObj.rules) {
+									if(this.getScoreSeleObj().length == 0) {
+										mui.toast('请选择打分规则');
+										return;
+									} else {
+										plus.nativeUI.showWaiting("提交中...")
+										studentRrade({
+											taids: this.getSeleStudentId().join('-'),
+											rids: this.getScoreSeleId().join('-'),
+											annotation: this.annotation,
+											time: this.timeSjc,
+											success: function(data) {
+												plus.storage.setItem('scopeSuccBack', JSON.stringify({
+													url: '../students/index.html',
+													id: 'view/students/index.html'
+												}));
+												mui.openWindow({
+													url: '../component/score-succ.html',
+													id: 'score-succ.html',
+												});
+												//											mui.toast('批量打分学生成功!');
+												//											var cid = plus.webview.currentWebview().opener();
+												//											mui.fire(cid, 'loadpage');
+												//											mui.back();
+											}
+										})
+									}
+								} else {
+									mui.toast('请选择打分项');
+									return;
+								}
+							},
+							// 给学生打分
+							godafen: function() {
+								if(this.getSeleStudentId().length == 0) {
+									mui.toast('请选择打分学生');
+									return;
+								}
+								//通过判断如果是班主任或副班主任走核心素养打分还是班内打分
+								if(this.role==4||this.role==12){
+									if(!this.seleScoreType.id){mui.toast('请选择打分类型');return}
+									if(this.seleScoreType.id==1){this.MoreScoreForTree();}   //核心素养打分
+									if(this.seleScoreType.id==2){this.MoreScoreForClassgrade();}	//班内打分								
+								}else{
+									this.MoreScoreForTree();
+								}
+								
+							},
+							//获取学生id
+							getSeleStudentId: function() {
+								return this.seleScoreStudentList.map(function(item) {
+									return item.id;
+								})
+							},
+							// 获取选中的rules id
+							getScoreSeleId: function() {
+								return this.getScoreSeleObj().map(function(item) {
+									return item.id;
+								})
+							},
+							seleTime: function() {
+								var that = this;
+								var dDate = new Date();
+								dDate.setFullYear(dDate.getFullYear(), dDate.getMonth(), dDate.getDate());
+								var minDate = new Date();
+								minDate.setFullYear(2010, 0, 1);
+								var maxDate = new Date();
+								maxDate.setFullYear(2099, 11, 31);
+								plus.nativeUI.pickDate(function(e) {
+									var d = e.date;
+									that.time = d.getFullYear() + "-" + buqi(d.getMonth() + 1) + "-" + buqi(d.getDate());
+									that.timeSjc = new Date(that.time.replace(/-/g, '/')).getTime();
+								}, function(e) {
+
+								}, {
+									title: "请选择日期",
+									date: dDate,
+									minDate: minDate,
+									maxDate: maxDate
+								});
+							},
+							// 获取是否有选中的
+							getScoreSeleObj: function() {
+								return this.seleScoreObj.rules.filter(function(item) {
+									return item.isSele == 1;
+								})
+							},
+							// check 选中 
+							seleIndex: function(item) {
+								item.isSele = item.isSele == 1 ? 0 : 1;
+							},
+							getInfo: function() {
+								this.info = JSON.parse(plus.storage.getItem('studentDetail'));
+							},
+							showView(path) {
+								mui.openWindow({
+									url: path,
+									id: path
+								})
+							},
+							
+							getScoreText: function(item) {
+								if(item.operation == 2) {
+									return '-' + item.value;
+								} else if(item.operation == 1) {
+									return '+' + item.value;
+								} else {
+									return item.value;
+								}
+							}
+						}
+					})
+					window.addEventListener('seleStudent', function(event) {
+						vm.seleScoreStudentList = JSON.parse(event.detail.list);
+					})
+					window.addEventListener('seleScoreObj', function(event) {
+						var seleObj = JSON.parse(event.detail.seleScoreObj);
+						seleObj.rules.forEach(function(item) {
+							item.isSele = 0;
+						})
+						vm.seleScoreObj = seleObj;
+					})
+					window.addEventListener('seleScoreObjForClasses', function(event) {
+						var seleObj = JSON.parse(event.detail.seleScoreObj);
+						vm.seleScoreObj = seleObj;
+//						vm.ScoreValue = {
+//								id:'',
+//								name:''
+//							}//班级打分分值
+                        vm.ScoreValueName="";
+					})
+				})
+			</script>
+	</body>
+
+</html>

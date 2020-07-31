@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		.icon {
+			/*background: #2196F3;
+			border-radius: 50%;
+			width: 0.8rem;
+			height: 0.8rem;
+			color: #ffffff;
+			text-align: center;*/
+			line-height: 0.8rem;
+			margin: 3.2rem auto 0.8rem;
+			font-weight: bold!important;
+		}
+		h3{
+			font-weight: initial;
+			font-size: 18px;
+		}
+		.icon .mui-icon{
+			font-size: 1rem;
+		}
+		.mui-content-padded{
+			position: fixed;
+			width: 100%;
+			bottom: 1.3rem;
+		}
+	</style>
+	<body>
+		<div id="app">
+			<!--<div class="icon">
+				<i class="mui-icon mui-icon-checkmarkempty"></i>
+			    <h3 class="tc">打分成功</h3>
+			</div>-->
+			<h3 class="tc icon" style="font-size:36px"><span style="box-shadow: 2px 2px 10px #2196F3;width: 36px;height: 36px;display: inline-block;border-radius:50% ;background: #2196F3;margin-right: 0.2rem;"><i class="material-icons" style="vertical-align: center;color: #FFFFFF;font-size:30px!important;">done</i></span>发起成功！</h3>
+			<div style="margin: 2rem auto 0 auto;padding: 0.5rem;">
+				<!--<button id="back" type="button" class="mui-btn mui-btn-primary mui-btn-block">返回</button>-->
+				<button type="button" class="mui-btn mui-btn-primary school_btn" id="back">返回</button>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				document.getElementById('back').addEventListener('tap',function() {
+					plus.webview.currentWebview().opener().close();
+					var backOpt = JSON.parse(plus.storage.getItem('scopeSuccBack'));
+					var detail = plus.webview.getWebviewById(backOpt.id);
+					mui.fire(detail, 'loadpage');
+// 					mui.openWindow({
+// 						url:backOpt.url,
+// 						id:backOpt.id
+// 					});
+					plus.webview.close(plus.webview.currentWebview());
+				});
+			})
+		</script>
+	</body>
+
+</html>

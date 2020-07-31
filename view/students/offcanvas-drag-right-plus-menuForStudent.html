@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			.mui-content {
+				padding-left: 10px;
+				padding-right: 30px;
+			}
+			
+			header.mui-bar {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="app">
+			<div id="offCanvasWrapper">
+				<div class="title">筛选</div>
+				<div class="from">
+					<div>
+						<p>开始时间</p>
+						<div class="flex just-center" @tap="seleDate(1)">
+							<span v-text="startDate?startDate:'请选择'"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+					<div>
+						<p>结束时间</p>
+						<div class="flex just-center" @tap="seleDate(2)">
+							<span v-text="endDate?endDate:'请选择'"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+					<!--<div>
+						<p>开始时间</p>
+						<div id="showUserPicker" class="flex just-center" @tap="showMajorGroupPick">
+							<span v-text="majorGroupPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>-->
+					<!--<div>
+						<p>结束时间</p>
+						<div class="flex just-center" @tap="majorPickShow">
+							<span v-text="majorPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>-->
+					<!--<div>
+						<p>评比项</p>
+						<div class="flex just-center" @tap="showPingBiPick">
+							<span v-text="pingbiPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>-->
+				</div>
+				<div class="btn">
+					<button type="button" class="mui-btn bg-gray color-gray mg-r-10" @tap="clearPick">重置</button>
+					<button type="button" class="mui-btn bg-gray main-color" @tap="filterClass">确定</button>
+				</div>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//关闭back、menu按键监听，这样侧滑主界面会自动获得back和memu的按键事件，仅在主界面处理按键逻辑即可；
+			mui.init({
+				keyEventBind: {
+					backbutton: false,
+					menubutton: false
+				}
+			});
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var main = null;
+			var menuPage = function() {
+				var _m = {};
+				var self = _m;
+				self.getWebviewOpener = function() {
+//					main = plus.webview.currentWebview().opener();
+                    main = plus.webview.getWebviewById('../students/deleteScoreHistory.html')
+				};
+				self.closeMenu = function() {
+					mui.fire(main, "menu:swiperight");
+				};
+				self.addEvent = function() {
+					window.addEventListener("swiperight", self.closeMenu);
+				};
+				self.init = function() {
+					self.addEvent();
+					self.getWebviewOpener();
+					
+				};
+				return _m;
+			}
+			new Vue({
+				el: '#app',
+				data: {
+					majorList: [],
+					classList: [],
+					majorGroupList: [],
+					majorPick: {
+						name: '请选择',
+						id: null
+					},
+					majorGroupPick: {
+						name: '请选择',
+						id: null
+					},
+					pingbiPick: {
+						name: '请选择',
+						id: null
+					},
+					startDate: null,
+					endDate: null,
+				},
+				watch: {
+					'startDate'(){
+						this.endDate=null;
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+					
+				},
+				methods: {
+					filterClass: function() {
+						var that = this;
+						if(!this.startDate){
+							mui.toast('请选择开始时间');
+							return;
+						}
+						if(!this.endDate){
+							mui.toast('请选择结束时间');
+							return;
+						}
+						var stime = new Date(that.startDate.replace(/-/g, '/')+' 00:00:00').getTime();
+						var etime = new Date(that.endDate.replace(/-/g, '/')+' 00:00:00').getTime()	
+						mui.fire(main, "filter", {
+							value: JSON.stringify({
+								stime:stime,
+								etime:etime							
+							})
+						});
+					},
+					clearPickAll: function(key) {
+//						if(key) {
+//							this[key].name = '请选择';
+//							this[key].id = null;
+//						} else {
+//							this.majorPick.name = '请选择';
+//							this.majorPick.id = null;
+//							this.majorGroupPick.name = '请选择';
+//							this.majorGroupPick.id = null;
+//							this.pingbiPick.name = '请选择';
+//							this.pingbiPick.id = null;
+//						}
+                       this.startDate=null;
+					   this.endDate=null;
+						
+					},
+					clearPick: function() {
+						this.clearPickAll();
+					},				
+					plusReady: function() {						
+						var that = this;
+						mui.plusReady(function() {
+							menuPage().init();							
+						})
+					},
+					seleDate: function(type) {
+						if(type==2){
+							if(!this.startDate){
+							  mui.toast('请先选择开始时间');	
+							  return;
+							}	
+						}
+						this.seleNativeTime(type);
+					},
+					seleNativeTime: function(type) {
+						var that = this;
+						var dDate = new Date();
+						dDate.setFullYear(dDate.getFullYear(), dDate.getMonth(), dDate.getDate());
+						var minDate = new Date();
+						if(type == 1) {
+							minDate.setFullYear(2010, 0, 1);
+						}
+						if(type == 2 && that.startDate) {
+							minDate.setFullYear(that.getStartDateYmd().y, that.getStartDateYmd().m, that.getStartDateYmd().d);
+						}
+                    
+						var maxDate = new Date();
+						maxDate.setFullYear(2099, 11, 31);
+						plus.nativeUI.pickDate(function(e) {
+							var d = e.date;
+							if(type == 1) {
+								that.startDate = d.getFullYear() + "-" + buqi(d.getMonth() + 1) + "-" + buqi(d.getDate());							
+							} else {
+								that.endDate = d.getFullYear() + "-" + buqi(d.getMonth() + 1) + "-" + buqi(d.getDate());
+							}
+						}, function(e) {
+
+						}, {
+							title: "请选择日期",
+							date: dDate,
+							minDate: minDate,
+							maxDate: maxDate
+						});
+					},
+					getStartDateYmd: function() {
+						return {
+							y: new Date(this.startDate).getFullYear(),
+							m: new Date(this.startDate).getMonth(),
+							d: new Date(this.startDate).getDate()
+						}
+					},
+				}
+			})
+		</script>
+	</body>
+
+</html>

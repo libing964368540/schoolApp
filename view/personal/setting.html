@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body,
+		html,
+		.mui-content {
+			/*background: #f9f9f9;*/
+			padding: 0 0.1rem;
+		}
+		
+		.mui-content ul {
+			margin-top: 0.4rem;
+		}
+		.mui-content ul li.mui-table-view-cell{
+			/*padding-top:20px ;*/
+			padding: 0 0.4rem;
+		
+		}
+		.mui-content ul li.mui-table-view-cell .wrap{
+			    padding: 0.45rem 0;
+				border-bottom: 1px solid #F3F5F8;
+		}
+	    .Listwrap{
+	    	position: relative;
+	    	padding-left: 0.8rem;
+	    }
+		.iconset{
+			color: #2196F3;
+			font-size: 22px!important;
+			margin-right: 15px;
+			vertical-align: top;
+			position: absolute;
+			left: 0;
+			top:-0.015rem;
+		}
+	</style>
+
+	<body>
+	
+		<div id="app" class="mui-content">	
+			<header class="mui-bar mui-bar-nav bg-white">
+			      <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			      <!--<h1 class="mui-title color-black">设置</h1>-->
+		     </header>
+			 <div style="width:100%;padding: 45px 0.38rem 10px;z-index:3;position: absolute;background:#ffffff;box-sizing: border-box;">
+						<h3 style="color: #444444;font-size: 32px;color: #101010;">设置</h3>
+						
+			</div>
+			<ul class="mui-table-view" style="padding-top: 2.5rem;">
+				<li class="mui-table-view-cell "@tap="showView('editMm.html')">
+					<div class="flex flex-y-center just-center wrap">
+						<div class="Listwrap"  style="font-size：17px;color: #101010;">
+						   <i class="material-icons iconset">lock_open</i>
+						     密码设置
+					    </div>
+					     <i class="material-icons" style="color: #C7C7CC;">chevron_right</i>
+					</div>
+				
+				</li>
+				<li class="mui-table-view-cell" style="font-size：17px">
+                     <div class="flex flex-y-center just-center wrap">
+					<div class="Listwrap">
+						<i class="material-icons iconset">attach_file</i>
+						关于
+					</div>
+					<i class="material-icons" style="color: #C7C7CC;">chevron_right</i>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" @tap="loginOut" style="font-size：17px">
+					<div class="flex flex-y-center just-center wrap">
+					        <div class="Listwrap">
+						      <i class="material-icons iconset">power_settings_new</i>
+						                   退出
+					        </div>
+					<i class="material-icons" style="color: #C7C7CC;" v-show="false">chevron_right</i>
+					</div>
+				</li>
+			</ul>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/login.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: "#app",
+					methods: {
+						loginOut: function() {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认登出账号吗?', '提示', btnArray, function(e) {
+								if(e.index == 1) {
+									loginOut(function() {
+										mui.openWindow({
+											url: "../login/login.html",
+											id: "login",
+										})
+									});
+								} 
+							})
+							
+						},
+						showView: function(path) {
+							mui.openWindow({
+								url: path,
+								id: path
+							})
+						}
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

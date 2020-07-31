@@ -1,0 +1,1021 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		.mui-content-padded {
+			margin: 0.4rem;
+		}
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item {
+			border-bottom: 0;
+			border-top: 0;
+		}
+		
+		.mui-slider-indicator.mui-segmented-control {
+			/*border-bottom: 1px solid #BBBBBB;*/
+		}
+		
+		.mui-control-item.mui-active {
+			border-bottom: 2px solid #2196F3!important;
+		}
+		
+		.mui-segmented-control .mui-control-item {
+			line-height: 36px;
+			color: #101010;
+		}
+		
+		form.mui-input-group {
+			padding: 15px 0;
+		}
+		
+		form.mui-input-group .mui-input-row {
+			margin-bottom: 5px;
+		}
+		
+		.mui-bar~.mui-content .mui-fullscreen {
+			top: 44px;
+			height: auto;
+		}
+		
+		.mui-pull-top-tips {
+			position: absolute;
+			top: -20px;
+			left: 50%;
+			margin-left: -25px;
+			width: 40px;
+			height: 40px;
+			border-radius: 100%;
+			z-index: 1;
+		}
+		
+		.mui-bar~.mui-pull-top-tips {
+			top: 24px;
+		}
+		
+		.mui-pull-top-wrapper {
+			width: 42px;
+			height: 42px;
+			display: block;
+			text-align: center;
+			background-color: #efeff4;
+			border: 1px solid #ddd;
+			border-radius: 25px;
+			background-clip: padding-box;
+			box-shadow: 0 4px 10px #bbb;
+			overflow: hidden;
+		}
+		
+		.mui-pull-top-tips.mui-transitioning {
+			-webkit-transition-duration: 200ms;
+			transition-duration: 200ms;
+		}
+		
+		.mui-pull-top-tips .mui-pull-loading {
+			/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+			margin: 0;
+		}
+		
+		.mui-pull-top-wrapper .mui-icon,
+		.mui-pull-top-wrapper .mui-spinner {
+			margin-top: 7px;
+		}
+		
+		.mui-pull-top-wrapper .mui-icon.mui-reverse {
+			/*-webkit-transform: rotate(180deg) translateZ(0);*/
+		}
+		/*pull bottom top*/
+		
+		.mui-pull-bottom-tips {
+			text-align: center;
+			background-color: #fff;
+			font-size: 15px;
+			line-height: 40px;
+			color: #777;
+		}
+		
+		.mui-pull-top-canvas {
+			overflow: hidden;
+			background-color: #fafafa;
+			border-radius: 40px;
+			box-shadow: 0 4px 10px #bbb;
+			width: 40px;
+			height: 40px;
+			margin: 0 auto;
+		}
+		
+		.mui-pull-top-canvas canvas {
+			width: 40px;
+		}
+		
+		.mui-input-row {
+			width: 50%;
+			display: inline-block;
+		}
+		
+		.mui-card-header {
+			width: 50%;
+			float: left;
+			text-align: center;
+		}
+		
+		#app .seat {
+			padding: 20px;
+			padding-left: 45px;
+			padding-right: 45px;
+		}
+		
+		#app .mui-card-header .imgWrap {
+			width: 80px;
+			height: 80px;
+			margin: 0 auto;
+			overflow: hidden;
+			margin-bottom: 5px;
+			background: #DDDDDD;
+		}
+		
+		#app .mui-card-header:after {
+			height: 0;
+		}
+		
+		#app .mui-card-header .imgWrap img {
+			width: 80px;
+			min-height: 100%;
+		}
+		
+		#app .mui-card-header.mui-card-media .mui-media-body {
+			margin-left: 0;
+			margin: 0 auto;
+		}
+		
+		#app .mui-card-header.mui-card-media .mui-media-body p {
+			color: #101010;
+		}
+		
+		#slider {
+			top: 130px;
+		}
+		#app .mui-segmented-control.mui-scroll-wrapper .mui-control-item {
+			margin: 0 24.5px;
+			padding: 0;
+		}
+	</style>
+
+	<body>
+		<div class="mui-content" id="app">
+			   <header class="mui-bar mui-bar-nav bg-white" >
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<i class="material-icons" id="shaixuanS" style="font-size: 30px;color: #101010;position: absolute;top:6px;right: 0.4rem;">more_horiz</i>
+				</header>
+			<div class="top-title">
+				<div class="mui-content-padded">
+					<div class="tr"  style="position: relative;height: 30px;">
+						<!--<i class="material-icons" id="shaixuanS" style="font-size: 30px;color: #444444;position: absolute;top:-6px;right: 0;">more_horiz</i>-->
+						<!--<i class="mui-icon iconfont icon-shaixuan main-color font-size-big-plus" id="shaixuanS"></i>-->
+					</div>
+				</div>
+					<div class="web-title">
+						<span class="active" style="font-size: 36px;padding-left: 0.5rem;color: #101010;">晚自修</span>
+						<div style="padding: 0 0.5rem;">
+							<p style="display: inline-block;" v-text="classNames"></p>
+							<p style="display: inline-block;" v-text="Headmaster"></p>
+						</div>	
+					</div>
+			</div>
+			<div id="slider" class="mui-slider mui-fullscreen" style="margin-top: 5px;">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<div class="mui-scroll">
+						<a class="mui-control-item" v-for="(item,index) in classBj" :class="index == 0 ? 'mui-active' : ''" :href="'#scroll-'+index" v-text="item.className">
+
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-group">
+					<div :id="'scroll-'+index" class="mui-slider-item mui-control-content" :class="index == 0 ? 'mui-active' : ''" v-for="(item,index) in classBj">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll seat" style="overflow: hidden;">
+								<!--<form class="mui-input-group">
+									<div class="mui-input-row mui-checkbox mui-left" v-for="row in item.list" style="display: inline-block;">
+										<label>{{row.name}}</label>
+									</div>
+								</form>-->
+								<div class="mui-card-header mui-card-media" v-for="row in item.list" :data-id="row.index">
+									<div class="imgWrap" @tap="judgeSeatState(row)">
+										<img v-lazy="getPhoto(row.student)" alt="" v-if="row.student.photoPath!=''" />
+									</div>
+
+									<div class="mui-media-body">
+										<p v-text="row.student.rname" style="color: #101010;"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="https://g1.jyblc.cn/pic/jyb_1111/vue-lazyload-1.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/duty.js"></script>
+		<script>
+			var seatPage = function() {
+				var _m = {};
+				var self = _m;
+				var main = plus.webview.currentWebview();
+				var menu;
+				var mask;
+				var showMenu = false;
+
+				self.showCelan = function() {
+					document.getElementById("shaixuanS").addEventListener("tap", function() {
+						self.openMenu();
+						
+					});
+				};
+				self.closeMenu = function() {
+					//窗体移动
+					self._closeMenu();
+					//关闭遮罩
+					mask.close();
+				};
+				self._closeMenu = function() {
+					if(showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "fixed";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "44px";
+						}
+						main.setStyle({
+							left: '0',
+							transition: {
+								duration: 150
+							}
+						});
+						//menu页面同时移动
+						menu.setStyle({
+							left: '100%',
+							transition: {
+								duration: 150
+							}
+						});
+						//等窗体动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+						showMenu = false;
+					}
+				};
+				self.openMenu = function() {
+					if(!showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "static";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "0px";
+						}
+
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						//显示完毕后，根据不同动画效果移动窗体；
+						menu.show('none', 0, function() {
+							main.setStyle({
+								left: '-70%',
+								transition: {
+									duration: 150
+								}
+							});
+							menu.setStyle({
+								left: '30%',
+								transition: {
+									duration: 150
+								}
+							});
+						});
+						//显示主窗体遮罩
+						mask.show();
+						showMenu = true;
+					}
+				}
+				self.getCelanWebview = function() {
+					setTimeout(function() {
+						menu = mui.preload({
+							id: 'duty-offcanvas-drag-left-plus-menu.html',
+							url: 'offcanvas-drag-left-plus-menu.html',
+							styles: {
+								left: "30%",
+								width: '70%',
+								zindex: 9997
+							}
+						});
+					}, 300);
+					
+				};
+				self.meuiSet = function() {
+					//重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+					mui.menu = function() {
+						if(showMenu) {
+							self.closeMenu();
+						} else {
+							self.openMenu();
+						}
+					}
+				};
+				self.watchMenu = function() {
+					window.addEventListener("seatfilter", function(event) {
+						var opt = JSON.parse(event.detail.value);
+						if(!opt.classPick) vmseat.classgrade_id = null;
+						vmseat.getSeatList({
+							classId: opt.classPick
+						})
+						vmseat.classNames=opt.names;
+						self.closeMenu();
+					});
+				};
+				self.init = function() {
+					mask = mui.createMask(self._closeMenu);
+					self.getCelanWebview();
+					self.showCelan();
+					self.meuiSet();
+					self.watchMenu();
+				};
+				return _m;
+			}
+			Vue.use(VueLazyload, {
+				preLoad: 1.3,
+				error: '../../img/timg.jpeg',
+				attempt: 1
+			});
+			vmseat = new Vue({
+				el: '#app',
+				data: {
+					classgrade_id: '',
+					classBj: [{
+						className: '第一组',
+						list: [{
+							index: 0,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 1,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 8,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 9,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 16,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 17,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 24,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 25,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 32,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 33,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 40,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 41,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}]
+					}, {
+						className: '第二组',
+						list: [{
+							index: 2,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 3,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 10,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 11,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 18,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 19,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 26,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 27,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 34,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 35,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 42,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 43,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}]
+					}, {
+						className: '第三组',
+						list: [{
+							index: 4,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 5,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 12,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 13,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 20,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 21,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 28,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 29,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 36,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 37,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 44,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 45,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}]
+					}, {
+						className: '第四组',
+						list: [{
+							index: 7,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 6,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 15,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 14,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 23,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 22,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 31,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 30,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 39,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}, {
+							index: 38,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 47,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						},{
+							index: 46,
+							student: {
+								id: "",
+								rname: "暂无",
+								photoPath: "",
+								temporary_state: 0,
+								temporary_state_des: ""
+							}
+						}]
+					}]
+				    ,classNames:"",
+				     Headmaster:""
+				},
+				mounted: function() {
+					var that = this;
+					mui.plusReady(function() {
+						that.scrollInit();
+						seatPage().init();
+						//获取当前角色
+						var Nowroles = getUserRole();
+						//账户信息
+						if(Nowroles==4){
+							var userinfo = JSON.parse(plus.storage.getItem('userinfo'));
+						    var classgrades = userinfo.identitysData[4].classgrades;
+						    if(classgrades.length>0){
+						    	that.classNames=classgrades[0].name;
+						    	 that.getSeatList({classId:classgrades[0].id});
+						    }
+						   
+						}
+						
+					})
+					mui.init();
+					//					this.PullRefreshInit();
+
+				},
+				methods: {
+					PullRefreshInit: function() {
+
+					},
+					pullDownRefresh: function() {
+						mui('#slider').pullRefresh().endPulldownToRefresh();
+					},
+					pullUpRefresh: function() {
+						mui('#slider').pullRefresh().endPullupToRefresh(false);
+					},
+					scrollInit: function() {
+						var $ = mui;
+						var deceleration = mui.os.ios ? 0.003 : 0.0009;
+						$('.mui-scroll-wrapper').scroll({
+							bounce: false,
+							indicators: true, //是否显示滚动条
+							deceleration: deceleration
+						});
+					},
+					getPhoto: function(item) {
+						if(item.photoPath) {
+							return window.imgpath + item.photoPath;
+						} else {
+							return "";
+						}
+
+						//		
+					},
+					//通过角色和班级判断是否具有班主任设置临时有事权限
+					judgeSeatState: function(data) {
+						//获取当前角色
+						var Nowroles = getUserRole();
+						//账户信息
+						var userinfo = JSON.parse(plus.storage.getItem('userinfo'));
+						var classgrades = userinfo.identitysData[4].classgrades;
+						if(Nowroles == 4) {
+							for(i = 0; i < classgrades.length; i++) {
+								if(classgrades[i].id == this.classgrade_id) {
+									this.setTime(data);
+								}
+							}
+						}
+
+						//
+					},
+					//初始化数据
+					seatInit: function(_this) {
+						for(var j = 0; j < 4; j++) {
+							for(var z = 0; z < _this.classBj[j].list.length; z++) {
+									_this.classBj[j].list[z].student.id = "";
+									_this.classBj[j].list[z].student.rname = "暂无";
+									_this.classBj[j].list[z].student.photoPath = "";
+									_this.classBj[j].list[z].student.temporary_state = 0;
+									_this.classBj[j].list[z].student.temporary_state_des="";
+									
+							}
+						}
+					},
+					//通过班级获取学生座位表
+					getSeatList: function(opt) {
+						var _this = this;
+						if(opt) {
+							if(opt.classId) this.classgrade_id = opt.classId;
+						}
+						//						this.classgrade_id=71;
+						var params = {};
+						params.classgrade_id = this.classgrade_id;
+
+						//						params.classgrade_id = 71;
+						if(this.classgrade_id) {
+							_this.seatInit(_this);
+							getSeatList({
+								data: params,
+								success: function(result) {
+									if(result.data.classgrade.director){
+										_this.Headmaster='班主任：'+result.data.classgrade.director.rname;
+									}
+									
+									var seats = result.data.seats;
+									for(var i = 0; i < seats.length; i++) {
+										var seatIndex = seats[i].index;
+
+										for(var j = 0; j < 4; j++) {
+											for(var z = 0; z < _this.classBj[j].list.length; z++) {
+
+												if(seatIndex == _this.classBj[j].list[z].index) {
+													_this.classBj[j].list[z].student.id = seats[i].student.id;
+													_this.classBj[j].list[z].student.rname = seats[i].student.rname;
+													_this.classBj[j].list[z].student.photoPath = seats[i].student.photoPath;
+													_this.classBj[j].list[z].student.temporary_state = seats[i].student.temporary_state
+													if(seats[i].student.temporary_state) {
+														_this.classBj[j].list[z].student.rname = seats[i].student.rname + '（临时请假）';
+													} else {
+														_this.classBj[j].list[z].student.rname = seats[i].student.rname;
+													}
+
+												}
+											}
+										}
+									}
+
+								}
+							})
+						}
+
+					},
+
+					//设置临时有事
+					setSeatState: function(data) {
+						var _this = this;
+						var btnArray = ['否', '是'];
+						mui.confirm('（当日18:10之前开放)', '更改' + data.student.rname + '晚自修状态', btnArray, function(e) {
+							if(e.index == 1) {
+								var params = {
+									student_account_id: data.student.id,
+									temporary_state: 1
+								}
+								setStudentState({
+									data: params,
+									success: function(result) {
+										_this.getSeatList();
+									}
+								})
+							} else {
+
+							}
+						})
+					},
+					//设置临时有事的时间
+					setTime: function(data) {
+						var fixedTime = 18 * 3600 + 10 * 60;
+						var time = new Date();
+						var nowTime = time.getHours() * 3600 + time.getMinutes() * 60;
+						if(nowTime < fixedTime) {
+							if(data.student.id) {
+								if(data.student.temporary_state) {
+									this.removeSeatState(data);
+								} else {
+									this.setSeatState(data);
+								}
+
+							}
+
+						} else {
+							mui.toast('已过修改时间，不可修改');
+						}
+					},
+					//取消临时有事状态
+					removeSeatState: function(data) {
+						var _this = this;
+						var btnArray = ['否', '是'];
+						mui.confirm('（当日18:10之前开放)', '取消' + data.student.rname + '晚自修状态', btnArray, function(e) {
+							if(e.index == 1) {
+								var params = {
+									student_account_id: data.student.id,
+									temporary_state: 0
+								}
+								setStudentState({
+									data: params,
+									success: function(result) {
+										_this.getSeatList();
+									}
+								})
+							} else {
+
+							}
+						})
+
+					}
+
+				}
+			})
+			window.addEventListener('tabPageShow', function() {
+				document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+				vmseat.getSeatList({});
+	          
+			})
+			//			});
+		</script>
+	</body>
+
+</html>

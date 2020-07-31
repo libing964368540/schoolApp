@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css"/>
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		#app .mui-table-view-radio {
+			margin-top: 1rem;
+			padding: 0 0.5rem;
+		}
+		
+		#app .mui-table-view-radio li {
+			border-bottom: 1px solid #eeeeee;
+			padding: 0.5rem 0.2rem 0.5rem 0;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		</header>
+		<div id="app">
+			<div class="mui-content-padded" style="margin-top: 80px;" >
+			      <div class="web-title" style="margin-top: 20px;margin-bottom:0;margin-left: 4px;">
+						<span class="active mg-r-10" style="font-size: 32px;color: #101010;">切换权限</span>
+					</div>
+				</div>
+			<ul class="mui-table-view mui-table-view-radio" style="margin-top: 30px;">
+					<li class="mui-table-view-cell flex just-center flex-y-center" v-for="item in role" :class="indexRole.key == item.key ? 'mui-selected' : ''"  @tap="editRoleScu(item.key,item.name)">
+					<p v-text="item.name" style="font-size: 17px;color: #101010;"></p>
+					<i class="material-icons" v-if="indexRole.key==item.key" style="color: #2196F3;">perm_identity</i>
+				</li>
+			</ul>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			new Vue({
+				el: '#app',
+				data: {
+					role: [],
+					indexRole: '',
+				},
+
+				mounted: function() {
+					this.muiReady();
+				},
+				methods: {
+					closeWebview: function() {
+//						var index = plus.webview.getWebviewById('HBuilder');
+                        var index =plus.webview.getWebviewById(plus.runtime.appid);
+						var wvs = plus.webview.all();
+						var indexWebview = plus.webview.currentWebview();
+						for(var i = 0, len = wvs.length; i < len; i++) {
+							//关闭除首页页面和登陆外的其他页面
+							if(wvs[i].getURL() == index.getURL() || wvs[i].getURL() == indexWebview.getURL()) {
+								continue;
+							}
+							plus.webview.close(wvs[i]);
+						}
+						mui.fire(index, 'refresh');
+						index.show();
+						setTimeout(function() {
+							plus.webview.close(indexWebview);
+						}, 20)
+					},
+					editRoleScu: function(key, name) {
+						if(this.indexRole.key == key){
+							return;
+						}
+						var that = this;
+						var btnArray = ['否', '是'];
+						mui.confirm('确认更换权限信息吗?', '提示', btnArray, function(e) {
+							if(e.index == 1) {
+								that.edit(key, name);
+								plus.storage.setItem('indexRole', JSON.stringify(that.indexRole));
+           						that.closeWebview();
+							}
+						},'div')
+					},
+					edit: function(key, name) {
+						var that = this;
+						this.indexRole.key = key;
+						this.indexRole.name = name;
+					},
+					getRole: function() {						
+						this.role = JSON.parse(plus.storage.getItem('role'));
+						this.indexRole = JSON.parse(plus.storage.getItem('indexRole'));
+						console.log(JSON.stringify(plus.storage.getItem('indexRole')));
+						console.log(JSON.stringify(this.indexRole));
+					},
+					muiReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.getRole();
+						})
+					}
+				}
+			})
+			
+		</script>
+	</body>
+
+</html>

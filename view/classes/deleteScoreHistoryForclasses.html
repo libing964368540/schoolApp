@@ -1,0 +1,818 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		h3 {
+			margin: 0;
+		}
+		
+		body {
+			background: #ffffff;
+		}
+		
+		#app {
+			/*padding-top: 44px;*/
+		}
+		
+		.sele-type {
+			border: 2px solid #F3F5F8;
+			color: #8e8f94;
+			margin: 0 0.3rem;
+			background: #F3F5F8;
+			border-radius: 6px;
+		}
+		
+		.top-title.erji .web-title span {
+			font-size: 32px;
+		}
+		
+		.top-title.erji {
+			padding: 0 0 0.2rem;
+		}
+		
+		.sele-type>div {
+			padding: 0.15rem 0;
+		}
+		
+		.sele-type>div.active {
+			background: #fff;
+			border-radius: 6px;
+			color: #101010;
+		}
+		
+		.mingxi-list {
+			padding: 0.5rem 0 0;
+		}
+		
+		.mingxi-list .project_name {
+			color: #101010;
+			margin-bottom: 0.1rem;
+			font-size: 14px;
+		}
+		
+		.mingxi-list .project_name p {
+			color: #9D9D9D;
+		}
+		.mingxi-list .project_nameS p{
+			color: #101010;
+		}
+		.mingxi-list .rule_name p {
+			font-size: 17px;
+			color: #101010;
+		}
+		
+		.posi {
+			z-index: 999;
+			background: #ffffff;
+		}
+		.seleHandle{
+			padding-left: 1.2rem!important;
+			padding-right: 0!important;
+		}
+		i.material-icons.all{
+			position:absolute;
+			display: inline-block;
+			right:70px;
+		}
+		#MoreDelete{
+			width: 100%;
+			position: fixed;
+			background: #fbf9f9;
+			height: 50px;
+			text-align: center;
+			line-height: 60px;
+			bottom:-100px;
+			transition:bottom 0.1s;
+			box-sizing: border-box;
+		}
+		#MoreDelete div{
+			float:left;
+			line-height: 50px;
+			position: relative;
+			padding-left: 10px;
+			box-sizing: border-box;
+		}
+		#MoreDelete div i.material-icons{
+			position: absolute;top:13px;left: 0.5rem;
+		}
+		#MoreDelete div.deleteBtn i.material-icons{
+			position: absolute;top:13px;left: 0;right: 0;margin: auto;
+		}
+		#MoreDelete div.allBtn{
+			width: 30%!important;
+			text-align: center;
+			padding-left:0.6rem ;
+		}
+		#MoreDelete div.deleteBtn{
+			width: 70%!important;
+			text-align: center;
+			height: 50px;
+		}
+		#MoreDelete.active{
+			bottom: 0;
+		}
+		i.material-icons.addItem{
+			position: absolute;
+			left: 0;
+			top:3px;
+			font-size: 15px!important;			
+		}
+	</style>
+
+	<body>
+
+		<div id="app">
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav bg-white">
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<div class="tr" style="margin-right:10px;margin-top: 0.15rem;position: relative;height: 30px;">
+						<i class="material-icons all" @tap="changgeIshandle" v-if="mingXiList.length>0&&role==3" style="color: #101010;">delete</i>
+						<i class="material-icons" id="shaixuan" style="font-size: 30px;color: #101010;position: absolute;right: 0;top:-4px">more_horiz</i>
+					</div>
+				</header>
+				<div style="width:100%;padding: 60px 0.5rem 10px;z-index:3;position: fixed;background:#FFFFFF;box-sizing: border-box;">
+					<h3 class="active" style="color: #101010;padding-bottom: 5px;font-size:28px!important;">班级打分记录</h3>
+					<div class="flex  flex-y-top just-center" style="padding-bottom: 0;">
+						<ul class="mui-table-view h1 ">
+							<li class="mui-table-view-cell base-box" style="padding: 0;margin-bottom: 0;">
+								<div class="mui-media-body">
+									<p v-html="semesterName +weekName +'&nbsp;&nbsp;&nbsp;&nbsp;'+project_Name"></p>
+								</div>
+							</li>
+						</ul>
+
+					</div>
+					<p class="NoData" v-if="mingXiList.length==0" v-text="NoData"></p>
+				</div>
+
+				<div id="refreshContainer" class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<!--数据列表-->
+						<div class="mui-table-view mui-table-view-chevron" style="padding: 135px 0 30px" id="OA_task_1">
+							<div :class="{'mingxi-list':Has,'mui-table-view-cell':Has,'seleHandle':seleHandle}" v-for="(item,index) in mingXiList" style="padding-left: 0.5rem;padding-right: 0.5rem;" @tap="seleIndex(item)">
+								<div style="position: absolute;left: 0.5rem;top:0;bottom:0;margin: auto;display: inline-block;height: 20px;"><i class="material-icons" :style="{color:item.isSele?'#ff4747':'#cacaca'}" v-if="seleHandle" v-text="item.isSele?'check_circle':'panorama_fish_eye'">panorama_fish_eye</i></div>
+								<!--删除-->
+								<div class="mui-slider-right mui-disabled">
+									<a class="mui-btn" style="background: #FF4747;" :ids="item.id" :operation_accountId="item.operation_account_id" :indexS="index" @tap="seleIndex(item)"><i class="material-icons" style="vertical-align: top">delete</i></a>
+								</div>
+								<div :class="{'mui-slider-handle':Ishandle}" style="border-bottom: 1px solid #F3F5F8;padding-bottom: 0.35rem;">
+									<div class="flex just-center flex-y-center project_name">
+										<p  style="font-size: 17px;position: relative;padding-left: 18px;"><i class="material-icons addItem" :style="{color:item.operation>1?'#ff4747':'#2196f3'}">fiber_manual_record</i><span v-text="item.classgrade_name" style="color: #101010;font-weight: bold;"></span></p>
+										<div class="flex just-center flex-y-center">
+											<p v-text="getYmd(item.commit_time)" style="margin-right: 10px;"></p>
+											<p v-text="item.operation_account_rname"></p>
+										</div>
+									</div>
+									<div class="flex flex-y-center project_nameS" style="margin-bottom: 0.2rem;padding-left: 18px;">
+										<div class="flex just-center flex-y-center">
+											<p v-text="item.project_name+' : '" style="margin-right: 3px;"></p>
+											<p v-text="item.rule_name"></p>
+										</div>
+										<p v-text="getScoreText(item)"></p>
+										<i class="material-icons" style="font-size: 18px;margin-left: 5px;color: #9D9D9D;" @tap.stop="Popover(item,index)" v-if="item.annotation">info</i>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<!--<p class="NoData" v-if="mingXiList.length==0" v-text="NoData"></p>-->
+					</div>
+				</div>
+				<div id="MoreDelete" :class="{active:seleHandle}" v-if="mingXiList.length>0">
+					 <div @tap="seleIsAll" class="allBtn"><i class="material-icons" v-text="isAll?'check_circle':'panorama_fish_eye'" :style="{color:isAll?'#ff4747':'#cacaca'}"></i><span :style="{color:isAll?'#101010':'#cacaca',display:'inlineBlock',paddingRight:'0.4rem',paddingLeft:'0.45rem'}">全选</span></div>
+					 <div :style="{color:indexSele>0?'#ffffff':'#cacaca',background:indexSele>0?'#FF4747':''}" @tap="MoreDeleteScore" class="deleteBtn"><i class="material-icons">delete</i></div>
+				</div>
+			</div>
+
+		</div>
+		<script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript" src="../../js/user/role.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var DeleteStuentScorePage = function() {
+				var _m = {};
+				var self = _m;
+				var main = plus.webview.currentWebview();
+				var menu;
+				var mask;
+				var showMenu = false;
+
+				self.showCelan = function() {
+					document.getElementById("shaixuan").addEventListener("tap", function() {
+						self.openMenu();
+					});
+				};
+				self.closeMenu = function() {
+					//窗体移动
+					self._closeMenu();
+					//关闭遮罩
+					mask.close();
+				};
+				self._closeMenu = function() {
+					if(showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "fixed";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "44px";
+						}
+						main.setStyle({
+							left: '0',
+							transition: {
+								duration: 1500
+							}
+						});
+						//menu页面同时移动
+						menu.setStyle({
+							left: '100%',
+							transition: {
+								duration: 150
+							}
+						});
+						//等窗体动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+						showMenu = false;
+					}
+				};
+				self.openMenu = function() {
+					if(!showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "static";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "0px";
+						}
+
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						//显示完毕后，根据不同动画效果移动窗体；
+						menu.show('none', 0, function() {
+							main.setStyle({
+								//								left: '-70%',
+								transition: {
+									duration: 1500
+								}
+							});
+							menu.setStyle({
+								left: '30%',
+								transition: {
+									duration: 150
+								}
+							});
+						});
+						//显示主窗体遮罩
+						mask.show();
+						showMenu = true;
+					}
+				}
+				self.getCelanWebview = function() {
+					setTimeout(function() {
+						menu = mui.preload({
+							id: 'class-offcanvas-drag-right-plus-menuforClasses.html',
+							url: 'offcanvas-drag-right-plus-menuforClasses.html',
+							styles: {
+								left: "30%",
+								width: '70%',
+								zindex: 9997
+							}
+						});
+					}, 300);
+				};
+				self.meuiSet = function() {
+					//重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+					mui.menu = function() {
+						if(showMenu) {
+							self.closeMenu();
+						} else {
+							self.openMenu();
+						}
+					}
+				};
+				self.watchMenu = function() {
+					window.addEventListener("filter", function(event) {
+						var opt = JSON.parse(event.detail.value);
+						self.closeMenu();
+                         vm.weekName =opt.majorName,
+						vm.semesterName =opt.majorGroupName+'/',
+						vm.project =opt.pingbiName
+						vm.getList({
+                            semesterIndex:opt.majorGroupId,
+                            weekIndex: opt.majorId,
+							projectId: opt.pingbiId
+						})
+//						vm.getList(opt);
+					});
+				};
+				self.init = function() {
+					mask = mui.createMask(self._closeMenu);
+					self.getCelanWebview();
+					self.showCelan();
+					self.meuiSet();
+					self.watchMenu();
+				};
+				return _m;
+			}
+			var vm = new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					rulesName:'',
+					defaultType: 1,
+					info: '',
+					page: 0,
+					semesterName: "", //学期的索引
+					weekName: "", //周次的索引
+					projectId: "", //评比项的索引 
+					project_Name:"",
+					mingXiList: [],
+					indexSele: 0,//被选中的打分记录的总数
+					Ishandle:true,
+					seleHandle:false,
+					Has:true,
+					isAll:false,//全选按钮
+					isAllText:'编辑'
+				},
+				watch: {
+					indexSele: function() {
+						if(this.indexSele == this.mingXiList.length) {
+							this.isAll = true;
+						} else {
+							this.isAll = false;
+						}
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+					mui.init({
+						pullRefresh: {
+							container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+							up: {
+								height: 50, //可选.默认50.触发上拉加载拖动距离
+								contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+								contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+								callback: this.pullUpRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							},
+							down: {
+								style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+								color: '#2196f3', //可选，默认“#2BD009” 下拉刷新控件颜色
+								height: '50px', //可选,默认50px.下拉刷新控件的高度,
+								range: '100px', //可选 默认100px,控件可下拉拖拽的范围
+								offset: '120px', //可选 默认0px,下拉刷新控件的起始位置
+								auto: false, //可选,默认false.首次加载自动上拉刷新一次
+								callback: this.pullDownRefresh
+								//必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							}
+						}
+					})
+				},
+				methods: {
+						//查看备注
+					Popover: function(item, index) {
+						var that = this;		
+					    that.rulesName = item.annotation;
+					   	mui.alert(that.rulesName,'备注','',null,'div');					
+								
+					},						
+					//点击全选按钮文字的变化
+					seleIsAll:function(){
+						if(this.isAll) {
+							this.mingXiList.forEach(item => {
+								item.isSele = 0;
+							})
+							this.indexSele=0;
+						} else {
+							this.mingXiList.forEach(item => {
+								item.isSele = 1;
+							})
+							this.indexSele=this.mingXiList.length;
+						}
+						this.isAll=!this.isAll;
+					},
+					/*递增或者递减全选数量*/
+					getIndexSeleLen: function(item) {
+						if(item.isSele == 1) {
+							this.indexSele += 1;
+						} else {
+							this.indexSele -= 1;
+						}
+					},
+					//改变每条信息选中状态
+					seleIndex: function(item) {
+						if(!this.seleHandle){return}
+						item.isSele = item.isSele == 1 ? 0 : 1;
+						this.getIndexSeleLen(item);
+					},
+					//获取被选择的打分记录
+					getSeleItem: function() {
+						var that = this;
+						var arr = [];
+						this.mingXiList.forEach((item) => {
+							if(that.role==3){
+								if(item.isSele == 1) {
+								   arr.push(item);
+							    }
+							}	
+						})
+						return arr;
+					},
+					//切换全选状态
+					changgeIshandle:function(){
+						const that = this;
+						var lis = $('.mui-transitioning.mui-selected').get(0);
+						setTimeout(function(){
+							 mui.swipeoutClose(lis);
+							that.Ishandle=!that.Ishandle;
+						    that.seleHandle=!that.seleHandle;
+						    that.isAllText=that.seleHandle?'完成':'编辑'
+						    that.indexSele = 0;
+						    that.mingXiList.forEach(item => {
+								   item.isSele = 0;
+							     })
+						},0)
+						
+					},
+					//通过权限判断传参来展示不同权限下展示的打分记录
+					getShowforPower: function(params) {
+						const that = this;
+						const arr = [];
+						if(plus.storage.getItem('userinfo')) {
+							var positionId = JSON.parse(plus.storage.getItem('userinfo')).identitysData;
+						}
+						if(that.role == 4) { //班主任或副班主任
+							var classgrades = positionId['4'].classgrades
+							if(classgrades.length == 0) {
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+						
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_ids = arr.join('-');
+							}
+						}
+						if(that.role == 8) { //专业部
+							var majorGroup = positionId['8'].majorGroup
+							if(!majorGroup) {
+								new fui({
+									text: '专业部权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								params.major_group_ids = majorGroup.id;
+							}
+						}
+						if(that.role == 12) { //专业部
+							var classgrades = positionId['12'].classgrades
+							if(classgrades.length == 0) {
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_ids = arr.join('-');
+							}
+						}
+						return params;
+
+					},
+					//通过当前日期获取学期和周次
+					ItemNowTime:function(){
+						var that=this;
+						var params={};
+						var date = new Date();
+					    var dateS= date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate();
+						    params.time = new Date(dateS+' 00:00:00').getTime();    		    
+						ItemNowTime({
+							data:params,
+							success:function(result){
+								  var data= result.data;
+								if(data){
+									 that.semesterName=data.semester.name+'/';
+								     that.weekName=data.week.name;
+								     that.getPingBiList(data);
+								     that.NoData="";
+								     
+								}else{									
+									new fui({
+									   text: '当前时间并未设置对应的周次,请设置后再试。',
+									   bg: '#FF4747'
+								  })
+								}
+								
+							},
+							error:function(){
+								that.weekName ='',
+						        that.semesterName ='',
+						        that.project =''
+						        that.NoData='暂无';
+							}
+						})
+					},
+					//获取五项评比
+					getPingBiList:function(ItemNow){
+						var params={ project_id:0};
+						var that = this;
+						getPingBiList({
+							data:params,
+							success:function(result){ 
+								 var data = result.data;
+								 if(data&&data.length>0){
+								 	  console.log(data)
+								 	  that.project_Name=data[0].name;
+								 	  var fnData={
+								     	 semesterIndex:ItemNow.semester.index,
+                                         weekIndex:ItemNow.week.index,
+                                         projectId:data[0].id
+								        }
+								 	  that.semesterIndex =ItemNow.semester.index;
+							          that.weekIndex =ItemNow.week.index;
+							          that.projectId = data[0].id;
+								      that.getList(fnData);
+
+                                  }
+							}
+						})
+					},
+					//获取得分是加还是减
+					getScoreText: function(item) {
+						if(item.operation == 1) {
+							return '+' + item.value;
+						} else {
+							return  item.value;
+						}
+					},
+					//上拉加载
+					pullUpRefresh: function() {
+						var that = this;
+						mui('#refreshContainer').pullRefresh().enablePullupToRefresh(false);
+						this.getList();
+					},
+					//下拉刷新
+					pullDownRefresh: function() {
+						var that = this;
+						var params = {
+							page: 0,
+							size: 30
+						}
+						if(this.semesterIndex) {
+							params.semester = this.semesterIndex;
+						};
+						if(this.projectId) {
+							params.week = this.weekIndex;
+						};
+						if(this.project){
+							params.project_id = this.projectId;
+						}
+						if(!this.getShowforPower(params)) {
+							return;
+						}
+						plus.nativeUI.showWaiting("加载中...")
+						getScoreForClasses({
+							data: params,
+							success: function(data) {
+								mui('#refreshContainer').pullRefresh().endPulldown();
+								that.indexSele=0;//初始化
+								that.mingXiList = [];
+								that.Ishandle=true
+					            that.seleHandle=false;
+					            that.isAllText='编辑';
+								if(data.data.list.length == 0) {
+									that.NoData = '暂无';
+									mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								} else {
+									that.page = 0;
+									that.NoData = '';
+									mui('#refreshContainer').pullRefresh().refresh(true);
+
+									that.count = data.data.count;
+									for(var i = 0; i < data.data.list.length; i++) {
+										data.data.list[i].isSele = 0;
+										that.mingXiList.push(data.data.list[i]);
+									}
+									that.page += 1;
+								}
+
+							},
+							error: function() {
+								that.NoData = '暂无'
+								mui('#refreshContainer').pullRefresh().endPulldown();
+							}
+						})
+
+					},
+					//获取消息
+					getList: function(opt) {
+						var that = this;
+						if(opt) {
+							if(opt.semesterIndex) this.semesterIndex = opt.semesterIndex;
+							if(opt.weekIndex) this.weekIndex = opt.weekIndex;
+							if(opt.project_id)this.projectId = opt.projectId;
+							this.mingXiList = [];
+							this.page = 0;
+							this.indexSele=0;
+							this.Ishandle=true
+					        this.seleHandle=false
+					         this.isAllText='编辑'
+							mui('#refreshContainer').pullRefresh().refresh(true);
+						}
+						var params = {
+							page: this.page,
+							size: 30
+						}
+						if(this.semesterIndex) {
+							params.semester = this.semesterIndex;
+						};
+						if(this.weekIndex) {
+							params.week = this.weekIndex;
+						};
+						if(this.projectId){
+							params.project_id = this.projectId;
+						}
+						if(!this.getShowforPower(params)) {
+							return;
+						}
+						getScoreForClasses({
+							data: params,
+							success: function(data) {
+								if(data.data.list.length == 0 && that.mingXiList.length == 0) {
+									that.NoData = '暂无';
+									mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								} else {
+
+									that.NoData = '';
+									that.count = data.data.count;
+									for(var i = 0; i < data.data.list.length; i++) {
+										data.data.list[i].isSele = 0;
+										that.mingXiList.push(data.data.list[i]);
+									}
+									//								that.chartInit();
+									that.page += 1;
+									//								if(that.count > 0) {
+									if(that.count == that.mingXiList.length) {
+										mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+									} else {
+										mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+									}
+									//								}
+								}
+
+							}
+						})
+					},
+					//转化日期
+					getYmd: function(time) {
+						var date = new Date(parseInt(time));
+						return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate()) + ' ' + buqi(date.getHours()) + ':' + buqi(date.getMinutes());
+					},
+					//删除
+					deleteScore: function() {
+						var that = this;
+						(function($) {
+							var btnArray = ['是', '否'];
+							$('#OA_task_1').on('tap', '.mui-btn', function(event) {
+								var elem = this;
+								var ids = this.getAttribute('ids'); //打分记录的id
+								var operation_accountId = this.getAttribute('operation_accountId'); //打分人id
+								var indexS = this.getAttribute('indexS'); //打分记录的下标
+								var li = elem.parentNode.parentNode;
+								that.role = getUserRole();
+								if(that.role != 3 && operation_accountId != plus.storage.getItem('faid')) {
+									new fui({
+										text: '该权限下不能删除打分记录',
+										bg: '#FF4747'
+									})
+									setTimeout(function() {
+										$.swipeoutClose(li);
+									}, 0);
+									return;
+								}
+								mui.confirm('确认删除该条记录？', '提示', btnArray, function(e) {
+									if(e.index == 0) {
+										 mui.swipeoutClose(li);
+										that.DeleteScoreForClasses(ids, li, indexS);
+									} else {
+										setTimeout(function() {
+											$.swipeoutClose(elem);
+										}, 0);
+									}
+								});
+							});
+						})(mui);
+
+					},
+					DeleteScoreForClasses: function(ids, li, indexS) {
+						var that = this;
+						plus.nativeUI.showWaiting("删除中...")
+						var params = {
+							record_ids: ids
+						}
+						DeleteScoreForClasses({
+							data: params,
+							success: function(data) {
+//								li.parentNode.removeChild(li);
+                                mui.swipeoutClose(li);
+								that.mingXiList.splice(indexS, 1);
+								//如果打分记录被删除完，需要重新加载一次
+							   if(that.mingXiList.length==0){
+								  that.page=0;
+								  that.pullDownRefresh();
+							     }
+							},
+							error: function() {
+
+							}
+						})
+					},
+					//批量删除
+					MoreDeleteScore:function(){
+						const that = this;
+						if(this.indexSele==0){return}; 
+						var arr=that.getSeleItem();
+						var btnArray = ['是', '否'];	
+						mui.confirm('确认删除该条记录？', '提示', btnArray, function(e) {
+								if(e.index == 0) {
+								   that.MoreDelHistoryForUser(arr);								   
+								} else {
+										
+								}
+							});
+					},
+					//批量删除执行
+					MoreDelHistoryForUser:function(arr){
+						var that = this;
+						var arrId=[];
+						arr.forEach(function(item){
+							arrId.push(item.id);
+						})
+						var that = this;
+						plus.nativeUI.showWaiting("批量删除中...")
+						var params = {
+							record_ids: arrId.join('-')
+						}
+						DeleteScoreForClasses({
+							data: params,
+							success: function(data) {
+							arr.forEach(function(item){
+								that.mingXiList.remove(item)
+							})               //移除被删除的打分记录
+							that.indexSele=0;//初始化选中的数量
+							//如果打分记录被删除完，需要重新加载一次
+							if(that.mingXiList.length==0){
+								that.page=0;
+								that.pullDownRefresh();
+							  }
+							},
+							error: function() {
+
+							}
+						})
+					},
+					//初始化
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							DeleteStuentScorePage().init();
+							that.ItemNowTime();
+							that.role = getUserRole();
+					        if(that.role!=3){
+						         that.Ishandle=false;
+					          }
+							if(that.role==3){//班级打分只有学生处可以删除
+								that.deleteScore();
+							}
+							
+						})
+					}
+				},
+			})
+		</script>
+	</body>
+
+</html>

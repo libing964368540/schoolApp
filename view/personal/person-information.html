@@ -1,0 +1,561 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		h4 {
+			padding: 25px 15px 10px;
+		}
+		
+		.mui-table-view:before,
+		.mui-table-view:after {
+			height: 0;
+		}
+		
+		.mui-table-view-cell {
+			padding: 0;
+		}
+		
+		.mui-table-view-cell p {
+			border-bottom: 1px solid #F3F5F8;
+		}
+		
+		.mui-table-view-cell h3 {
+			font-size: 20px;
+			padding-top: 20px;
+			color: #101010;
+		}
+		
+		.mui-table-view p {
+			color: #a2a2a2;
+			padding: 0.26rem 0;
+			background: #fff;
+		}
+		
+		.mui-table-view p.active {
+			padding-top: 0.1rem;
+			padding-bottom: 0;
+		}
+		/*.mui-table-view p:nth-child(even) {
+			background: #F3F5F8;
+		}*/
+		
+		.mui-ellipsis span {
+			display: block;
+			font-size: 14px;
+			color: #606061;
+			padding-bottom: 5px;
+		}
+		
+		.mui-ellipsis span:nth-child(2),
+		p.postsWrap {
+			font-size: 17px;
+			color: #444444;
+			border: none;
+		}
+		
+		.mui-content-padded {
+			position: relative;
+		}
+		
+		.mui-content-padded .headImg {
+			position: absolute;
+			right: 4px;
+			top: -10px;
+		}
+		
+		.mui-content-padded img {
+			width: 70px;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			</header>
+			<div class="mui-content" style="padding-left:30px ;padding-right:30px ;padding-top: 60px;">
+				<div class="mui-content-padded" style="margin: 0;min-height: 60px;">
+					<div class="web-title">
+						<h3 class="active" v-text="info.rname" style="color: #101010;font-size: 32px;"></h3>
+						<div>
+							<p v-text="'用户名：'+username || ''" style="font-size: 14px;font-weight: normal;color: #606061!important;"></p>
+						</div>
+					</div>
+					<span class="headImg" style="float:right;border-radius:50%;overflow: hidden ;height: 70px;">
+						  <img id="head-img" :src="window.imgpath + userPhoto" alt="" />
+					</span>
+				</div>
+				<ul class="mui-table-view mb30">
+					<li class="mui-table-view-cell">
+						<h3>基本信息</h3>
+						<div class="mui-media-body color-gray">
+							<p class='mui-ellipsis' style="border:none ;">
+								<span style="border:none ;margin-bottom: -15px;">岗位</span>
+								<p class="postsWrap active" v-for="item in posts" v-text="item.name"></p>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>性别</span>
+								<span v-text="getSex(info.sex)"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>出生年月</span>
+								<span v-text="getYmd(info.birthday)|| '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>身份证</span>
+								<span v-text="info.idcNnmner || '暂无'"></span>
+							</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<h3>联系方式</h3>
+						<div class="mui-media-body color-gray">
+							<p class='mui-ellipsis'>
+								<span>联系电话</span>
+								<span v-text="info.phone || '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>虚拟网号</span>
+								<span v-text="info.virtualphone || '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>省份</span>
+								<span v-text="info.province || '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>城市</span>
+								<span v-text="info.city || '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>县（区）</span>
+								<span v-text="info.county || '暂无'"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>地址</span>
+								<span v-text="info.address || '暂无'"></span>
+							</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<h3>其他信息</h3>
+						<div class="mui-media-body color-gray">
+							<p class='mui-ellipsis'>
+								<span>民族</span>
+								<span v-text="nationName"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>政治面貌</span>
+								<span v-text="getNation()"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>学历</span>
+								<span v-text="educationName"></span>
+							</p>
+							<p class='mui-ellipsis'>
+								<span>状态</span>
+								<span v-text="getSate(info.identitysData[role.key].activeservice_state) || '暂无'"></span>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			new Vue({
+				el: '#app',
+				data: {
+					nationName: "暂无",
+					educationName: "暂无",
+					info: {},
+					username: '',
+					role: '',
+					userPhoto: '',
+					minzu: [{
+							"id": "1",
+							"name": "汉族"
+						}, {
+							"id": "2",
+							"name": "蒙古族"
+						}, {
+							"id": "3",
+							"name": "回族"
+						},
+						{
+							"id": "4",
+							"name": "藏族"
+						}, {
+							"id": "5",
+							"name": "维吾尔族"
+						}, {
+							"id": "6",
+							"name": "苗族"
+						},
+						{
+							"id": "7",
+							"name": "彝族"
+						}, {
+							"id": "8",
+							"name": "壮族"
+						}, {
+							"id": "9",
+							"name": "布依族"
+						},
+						{
+							"id": "10",
+							"name": "朝鲜族"
+						}, {
+							"id": "11",
+							"name": "满族"
+						}, {
+							"id": "12",
+							"name": "侗族"
+						},
+						{
+							"id": "13",
+							"name": "瑶族"
+						}, {
+							"id": "14",
+							"name": "白族"
+						}, {
+							"id": "15",
+							"name": "土家族"
+						},
+						{
+							"id": "16",
+							"name": "哈尼族"
+						}, {
+							"id": "17",
+							"name": "哈萨克族"
+						}, {
+							"id": "18",
+							"name": "傣族"
+						}, , {
+							"id": "19",
+							"name": "黎族"
+						}, {
+							"id": "20",
+							"name": "傈僳族"
+						}, {
+							"id": "21",
+							"name": "佤族"
+						},
+						{
+							"id": "22",
+							"name": "畲族"
+						}, {
+							"id": "23",
+							"name": "高山族"
+						}, {
+							"id": "24",
+							"name": "拉祜族"
+						},
+						{
+							"id": "25",
+							"name": "水族"
+						}, {
+							"id": "26",
+							"name": "东乡族"
+						}, {
+							"id": "27",
+							"name": "纳西族"
+						},
+						{
+							"id": "28",
+							"name": "景颇族"
+						}, {
+							"id": "29",
+							"name": "柯尔克孜族"
+						}, {
+							"id": "30",
+							"name": "土族"
+						},
+						{
+							"id": "31",
+							"name": "达斡尔族"
+						}, {
+							"id": "32",
+							"name": "仫佬族"
+						}, {
+							"id": "33",
+							"name": "羌族"
+						}, {
+							"id": "34",
+							"name": "布朗族"
+						}, {
+							"id": "35",
+							"name": "撒拉族"
+						}, {
+							"id": "36",
+							"name": "毛难族"
+						},
+						{
+							"id": "37",
+							"name": "仡佬族"
+						}, {
+							"id": "38",
+							"name": "锡伯族"
+						}, {
+							"id": "39",
+							"name": "阿昌族"
+						},
+						{
+							"id": "40",
+							"name": "普米族"
+						}, {
+							"id": "41",
+							"name": "塔吉克族"
+						}, {
+							"id": "42",
+							"name": "怒族"
+						},
+						{
+							"id": "43",
+							"name": "乌孜别克族"
+						}, {
+							"id": "44",
+							"name": "俄罗斯族"
+						}, {
+							"id": "45",
+							"name": "鄂温克族"
+						},
+						{
+							"id": "46",
+							"name": "崩龙族"
+						}, {
+							"id": "47",
+							"name": "保安族"
+						}, {
+							"id": "48",
+							"name": "裕固族"
+						},
+						{
+							"id": "49",
+							"name": "京族"
+						}, {
+							"id": "50",
+							"name": "塔塔尔族"
+						}, {
+							"id": "51",
+							"name": "独龙族"
+						}, {
+							"id": "52",
+							"name": "鄂伦春族"
+						}, {
+							"id": "53",
+							"name": "赫哲族"
+						}, {
+							"id": "54",
+							"name": "门巴族"
+						},
+						{
+							"id": "55",
+							"name": "珞巴族"
+						}, {
+							"id": "56",
+							"name": "基诺族"
+						}
+					],
+					xueli: [{
+							id: 1,
+							name: '小学'
+						},
+						{
+							id: 2,
+							name: '初中'
+						},
+						{
+							id: 3,
+							name: '高中'
+						},
+						{
+							id: 4,
+							name: '大专'
+						},
+						{
+							id: 5,
+							name: '本科'
+						},
+						{
+							id: 6,
+							name: '研究生'
+						},
+						{
+							id: 7,
+							name: '博士'
+						}
+					],
+					posts: []
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					//获得生日
+					getYmd: function(time) {
+						if(time) {
+							var date = new Date(parseInt(time));
+							return date.getFullYear() + '-' + buqi((date.getMonth() + 1)) + '-' + buqi(date.getDate())
+						} else {
+							return "暂无"
+						}
+
+					},
+
+					//获取岗位
+					getposts: function() {
+						var arr = [];
+						var arr1 = [];
+						var identitysData = this.info.identitysData;
+
+						for(i in identitysData) {
+							arr.push(identitysData[i].posts);
+							if(i == 4) {
+								this.fill_classGrade(identitysData[i].classgrades, arr1)
+							}
+							if(i == 8) {
+								this.fill_group(identitysData[i].majorGroup, arr1)
+							}
+							if(i == 12){
+								this.fill_Vice_classGrade(identitysData[i].classgrades,arr1)
+							}
+						}
+							for(var i=0;i<arr[arr.length-1].length;i++){
+							arr1.push({name:arr[arr.length-1][i].name})
+						}
+						this.fill_Post(arr1);	
+
+					},
+					//填充副班主任
+					fill_Vice_classGrade:function(classgrade,posts_bind){
+						 if(classgrade){
+                              for(var i=0;i<classgrade.length;i++){
+                              	    if(classgrade[i].identity_id!=0){
+                              	    	 posts_bind.push({name:classgrade[i].name+'副班主任'});
+                              	    }   
+                               }
+                            }
+                         return posts_bind;
+					},
+					//填充班级岗位
+					fill_classGrade: function(classgrade, posts_bind) {
+						if(classgrade) {
+							for(var i = 0; i < classgrade.length; i++) {
+								if(classgrade[i].identity_id != 0) {
+									posts_bind.push({
+										name: classgrade[i].name + '班主任'
+									});
+								}
+							}
+						}
+						return posts_bind;
+					},
+					//填充专业部岗位
+					fill_group: function(majorGroup, posts_bind) {
+						if(majorGroup) {
+							posts_bind.push({
+								name: majorGroup.name + '专业部负责人'
+							});
+						}
+						return posts_bind;
+					},
+
+					getNation: function() {
+						if(this.info.partymember == 0) {
+							return '群众';
+						}
+						if(this.info.partymember == 1) {
+							return '党员';
+						}
+						if(this.info.partymember == 2) {
+							return '团员';
+						}
+						if(this.info.partymember == 3) {
+							return '其他';
+						}
+						return '暂无';
+					},
+					//返回性别
+					getSex: function(index) {
+						var sexArr = {
+							"0": '女',
+							"1": "男"
+						}
+						return sexArr[index];
+					},
+					//返回状态
+					getSate: function(index) {
+						var activeservicestateArr = {
+							"1": "在职",
+							"0": "离校"
+						}
+						return activeservicestateArr[index];
+					},
+					//填充岗位数组
+					fill_Post: function(arr) {
+						if(arr.length<=3) {
+							this.posts = arr;
+						} else {
+							this.posts = arr.splice(0, 3);
+						}
+               
+					},
+					getZyb: function() {
+						//if(this.info.identitysData[this.role.key].majors) {
+						//										return JSON.parse(this.info.identitysData[this.role.key].majors)[0].name;
+						//}
+						return '暂无';
+					},
+					getZy: function() {
+						//if(this.info.identitysData[this.role.key].majors) {
+						//										return JSON.parse(this.info.identitysData[this.role.key].majors)[0].group.name;
+						//}
+						return '暂无';
+					},
+					getBj: function() {
+						//if(this.info.identitysData[this.role.key].classgrades) {
+						//										return JSON.parse(this.info.identitysData[this.role.key].classgrades)[0].name;
+						//}
+						return '暂无';
+					},
+					userInit: function() {
+						this.info = JSON.parse(plus.storage.getItem('userinfo'));
+						this.role = JSON.parse(plus.storage.getItem('indexRole'));
+						this.userPhoto = this.info.photopath;
+						this.username = plus.storage.getItem('username');
+						if(this.info.nation) {
+							this.nationName = this.minzu[this.info.nation - 1].name
+						}
+						if(this.info.identitysData[this.role.key].education) {
+							this.educationName = this.xueli[this.info.identitysData[this.role.key].education - 1].name
+						}
+
+						this.getposts();
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.userInit();
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

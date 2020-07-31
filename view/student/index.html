@@ -1,0 +1,476 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css"/>
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		.mui-content .head {
+			padding: 0.4rem 0 0.2rem;
+		}
+		
+		.mui-content .head img {
+			width: 1.28rem;
+		}
+		ul .mui-table-view-cell.base-box{
+			padding: 0;
+			padding-top: 15px;
+			/*border-bottom: 1px solid #e0e0e0;*/
+		}
+		.mui-table-view .mui-media-body p {
+			line-height: 0.4rem;
+			color: #8B8B8B;
+			/*font-size: 0.28rem;*/
+			font-size: 14px;
+		}
+		
+		.mui-table-view:after {
+			right: 10px;
+			left: 10px;
+		}
+		
+		.mui-table-view .left img {
+			width: 3.38rem;
+			height: 3.38rem;
+		}
+		
+		.mui-table-view .right div {
+			margin-bottom: 0.36rem;
+		}
+		
+		.mui-table-view .right div:nth-child(4) {
+			margin-bottom: 0;
+		}
+		
+		.mui-table-view .right div button {
+			width: 1.8rem;
+			height: 0.56rem;
+			line-height: 0.28rem;
+		}
+		
+		.vert-mid {
+			padding: 11px 15px;
+		}
+		
+		.vert-mid.up .iconfont {
+			color: #2196F3;
+		}
+		
+		.vert-mid.down .iconfont {
+			color: #FF4747;
+		}
+		
+		.vert-mid .right {
+			font-size: 0.26rem;
+		}
+		.mui-badge-danger{
+			background: #F69AB6;
+		}
+		i[sex="1"] {
+			color: #dd524d!important;
+		}
+		#app .student-rank>div button {
+			width: 100%;
+			
+		}
+		#app .student-rank>div {
+			margin-right: 0.1rem;
+		}
+		#app .student-rank>div:last-child {
+			margin-right: 0;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+			</header>
+			<div class="mui-content " style="padding-left:0.5rem ;padding-right:0.5rem ;padding-bottom: 50px;">
+				<div class="flex  flex-y-top just-center" style="padding-bottom: 0.35rem;">
+		
+				 	<div class="web-title">
+						<span class="active mg-r-10" style="color: #101010;font-size: 30px!important;"v-if="coreProject" v-text="coreProject.statistics.project_name"></span>
+					</div>
+				</div>
+				
+				<ul class="mui-table-view mui-table-view-chevron"style="padding: 0.52rem 0;padding-bottom: 0.4rem;" @tap="showView('student-history.html')">
+						<li class="flex  flex-y-top just-center">
+							<div class="flex  flex-y-top just-center">
+							
+								<span style="margin-right: 0.1rem;color: #101010;">我的综合评分</span>
+							</div>
+						    <div class="flex  flex-y-top just-center">
+						    	<span class="main-color font-size-big-plus-x" v-text="FromWayToScore(coreProject.statistics.value)" style="font-weight: bold;"></span> 				
+						    	<i class="material-icons" style="color: #8B8B8B;">chevron_right</i>
+						    </div>
+					</li>
+				</ul>
+				<div class="mui-table-view">
+					<div class="flex just-center">
+						   <div id="canvas_top_wrap">
+						   	     <div id="canvas_top" style="width: 100px;height: 100px;margin:0 0 10px 0;"></div>
+                                <p class="top" style="text-align: center;">全校</p>
+                                <p class="top" style="text-align: center;" v-text="rankList.top_rank"></p>
+                            </div>
+                            <div id="canvas_top_majorGroup_wrap">
+                            	<div id="canvas_top_majorGroup" style="width: 100px;height: 100px;margin:0 0 10px 0;"></div>
+                                <p class="top_majorGroup" style="text-align: center;">专业部</p>
+                                <p class="top" style="text-align: center;" v-text="rankList.majorGroup_rank"></p>
+                            </div>
+                            <div id="canvas_top_classgrade_wrap">
+                            	<div id="canvas_top_classgrade" style="width: 100px;height: 100px;margin:0 0 10px 0;"></div>
+                                <p class="top_classgrade" style="text-align: center;">班级</p>
+                                <p class="top" style="text-align: center;" v-text="rankList.classgrade_rank"></p>
+                            </div>
+					</div>
+					<div class="flex " style="margin-top:40px;padding-top: 40px;padding-bottom:35px;margin-bottom: 35px;border-bottom: 0.01rem solid #F3F5F8;border-top: 0.01rem solid #F3F5F8;">	
+						<div class="left line0">
+							<div class="chart" id="chart" style="width:6.5rem;height: 5.4rem;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="flex just-center flex-y-center up">
+					<div class="left">
+						<p v-for="item in zan" v-if="item.rank" style="padding-bottom: 25px">
+							<span class="mui-icon iconfont icon-zan"style="font-size: 25px!important;color: #2196F3;margin-right: 0.3rem"></span>
+							<span v-text="item.name + '评分' + item.type + '第' + item.rank" class="FontSize17color"></span>
+						</p>
+					</div>
+				</div>
+				<div class="vert-mid flex just-center flex-y-center down">
+					<div class="left">
+						<p v-for="item in dengpao" style="padding-bottom: 25px">
+							<span class="mui-icon iconfont icon-bulb"style="font-size: 25px!important;color: #FF4747;margin-right: 0.3rem"></span>
+							<span v-text="item.name + '评分' + item.type + '第' + item.rank" style="color: #b6b6b6!important;"></span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+         <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="https://g1.jyblc.cn/pic/jyb_1111/vue-lazyload-1.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/echarts.min.js"></script>
+		<sctipt src="../../js/PercentPie.js"></sctipt>
+		<script src="../../js/cavans.js"></script>
+		<script src="../../js/api/student.js"></script>
+		<script type="text/javascript" src="../../js/api/login.js"></script>
+		<script type="text/javascript">
+			Vue.use(VueLazyload, {
+				preLoad: 1.3,
+				error: '../../img/timg.jpeg',
+				attempt: 1
+			});
+
+				var vm = new Vue({
+					el: '#app',
+					mixins: [userRole],
+					data: {
+						info: {},
+						coreProject: {},
+						subProject: [],
+						scoreSucc: false,
+						zan: [],
+						dengpao: [],
+						rankList:{
+							top_rank:'',
+							majorGroup_rank:'',
+							classgrade_rank:''							
+						}
+					},
+					watch: {
+						'info.id': function() {
+							this.getStudentReport();
+						}
+					},
+					mounted: function() {
+                        this.plusReady();
+					},
+					methods: {
+						//通过学生的住校情况来判断
+						FromWayToScore:function(value){
+						    var arr=[0,0,0];
+						    var a= value?value + arr[this.info.identitysData[6].st_way]:arr[this.info.identitysData[6].st_way]
+						    return a
+						},
+						plusReady: function() {
+						   var that = this;
+						   mui.plusReady(function() {
+							   that.role = getUserRole();
+							   console.log('页面初始化,分数是否成功的值为->' + that.scoreSucc);
+							   that.userInfo();
+							   if(that.role!='7'){
+							   	  that.getStudentReport();
+							   }
+							 
+						 })
+					 },
+					getStudentReport: function() {
+						    
+							var that = this;
+							if(this.role=='7'){
+								var taid = plus.storage.getItem('Forfamily_faid');
+							}else{
+								var taid = plus.storage.getItem('faid');
+							}
+							plus.nativeUI.showWaiting( "加载中..." )
+							getPerformanceReport({
+								data: {
+									project_id: 1,
+									taid: taid
+								},
+								success: function(data) {									
+									that.coreProject = data.data.projectPerformanc;
+									that.subProject = data.data.subProjectPerformanc;
+									//图表初始化
+									that.$nextTick(function() {
+										that.chartInit();
+                                        canvas_echars.PercentPie(that.coreProject.statistics);
+									})
+									//灯泡和赞的展示
+									that.getZanAndDengPao();
+									//填充排名的名次
+									const top_rank = that.coreProject.statistics.top?that.coreProject.statistics.top:0;
+	                                const majorGroup_rank = that.coreProject.statistics.top_majorGroup?that.coreProject.statistics.top_majorGroup:0;
+	                                const classgrade_rank = that.coreProject.statistics.top_classgrade?that.coreProject.statistics.top_classgrade:0;
+									//that.getZanAndDengPao('lastPerformanct','lastWeekZan','lastWeekDengPao');
+									that.rankList.top_rank=top_rank;
+									that.rankList.majorGroup_rank=majorGroup_rank;
+									that.rankList.classgrade_rank=classgrade_rank;
+								}
+							})
+						},
+						//如果是家长账号时获取家长对应学生的信息
+						getForFamily:function(){
+							var that = this;
+						
+								var params={
+									 family_id: plus.storage.getItem('faid')
+								}
+								ForFamily({
+									data:params,
+									success:function(data){
+									    //对应的学生id
+									    plus.storage.setItem('Forfamily_faid', data.data.id + '');
+									    //对应的学生数据
+									    plus.storage.setItem('Forfamily_userinfo', JSON.stringify(data.data.accountData));
+									    //对应的学生用户名
+									    plus.storage.setItem('Forfamily_username', data.data.username);
+									    
+									    that.username = data.data.username;
+									    
+							            that.info = data.data.accountData;
+							             that.getStudentReport();
+									}
+								})
+							
+							
+						},
+						userInfo: function() {
+							if(this.role=='7'){
+							   this.getForFamily();
+							}else{
+								this.username = plus.storage.getItem('username');
+							    this.info = JSON.parse(plus.storage.getItem('userinfo'));
+							}
+						   
+						},
+						getPhoto: function(item) {
+							return window.imgpath + item.photopath;
+						},
+						showView: function(path) {
+							if(this.role=='7'&& path=="information.html"){
+							   return;	
+							}
+							mui.openWindow({
+								url: path,
+								id: path,
+								extras: {
+									name: this.title
+								}
+							})
+						},
+						getDengpao: function(item) {
+							var fazhi = {
+								top: item.statistics.population * 0.9,
+								majorGroup: item.statistics.population_majorGroup * 0.9,
+								major: item.statistics.population_major * 0.9,
+								classgrade: item.statistics.population_classgrade * 0.9
+							};
+							if(item.statistics.top >=fazhi.top ) {
+								return {
+									isDengpao: true,
+									name: item.statistics.project_name,
+									type: '全校'
+								}
+							}
+							if( item.statistics.top_majorGroup>= fazhi.majorGroup) {
+								return {
+									isDengpao: true,
+									name: item.statistics.project_name,
+									type: '全专业部'
+								}
+							}
+							if(item.statistics.top_major >=fazhi.top_major ) {
+								return {
+									isDengpao: true,
+									name: item.statistics.project_name,
+									type: '全专业'
+								}
+							}
+							if(item.statistics.top_classgrade >=fazhi.top_classgrade ) {
+								return {
+									isDengpao: true,
+									name: item.statistics.project_name,
+									type: '全班'
+								}
+							}
+							return {
+								isDengpao: false,
+							}
+						},
+						getZanAndDengPao: function() {
+							var that = this;
+							this.zan = [];
+							this.dengpao = [];
+							var list = this.subProject;
+							list.forEach(function(item) {
+								if(item.statistics.top <= 5 || item.statistics.top_major <= 5 || item.statistics.top_majorGroup <= 5 || item.statistics.top_classgrade <= 5) {
+									var type = '';
+									var rank = '';
+									if(item.statistics.top <= 5) {
+										type = '全校';
+										rank = item.statistics.top;
+									} else if(item.statistics.top_major <= 5) {
+										type = '全专业';
+										rank = item.statistics.top_major;
+									}  else if(item.statistics.top_majorGroup <= 5) {
+										type = '全专业部';
+										rank = item.statistics.top_majorGroup;
+									} else if(item.statistics.top_classgrade <= 5) {
+										type = '全班';
+										rank = item.statistics.top_classgrade;
+									}
+									that.zan.push({
+										name: item.statistics.project_name,
+										type: type,
+										rank: rank
+									});
+								} else {
+									var status = that.getDengpao(item);
+									if(status.isDengpao) {
+										that.dengpao.push({
+											name: status.name,
+											type: status.type
+										})
+									}
+								}
+							})
+						},
+						//echart 获取排名最高分数渲染
+						getIndicator: function() {
+							var indicator = [];
+							this.subProject.forEach(function(item) {
+								if(item.statistics.value+0 < 0){
+									indicator.push({
+									name: item.heightStatistics.project_name,
+									max: item.heightStatistics.value === null ? 0 : item.heightStatistics.value < 0 ? 0 : item.heightStatistics.value + 0,
+									min: item.statistics.value+0
+								});
+								}else{
+									indicator.push({
+									name: item.heightStatistics.project_name,
+									max: item.heightStatistics.value === null ? 0 : item.heightStatistics.value < 0 ? 0 : item.heightStatistics.value + 0
+								});
+								};
+								
+							})
+							return indicator;
+						},
+						// echart 获取自己的分数渲染
+						getChartMyScore: function() {
+							var myScore = [];
+							this.subProject.forEach(function(item) {
+									myScore.push(item.statistics.value ? item.statistics.value + 0 : 0);
+							})
+							return myScore;
+						},
+						getLastWeekDengPaoText: function() {
+							if(this.dengpao.length > this.laswWeekDengPao.length) {
+								return {
+									type: '增加',
+									num: this.dengpao.length - this.laswWeekDengPao.length
+								} 
+							} else {
+								return {
+									type: '减少',
+									num: this.laswWeekDengPao.length - this.dengpao.length
+								}
+							}
+						},
+						getLastWeekZanText: function() {
+							if(this.zan.length > this.lastWeekZan.length) {
+								return {
+									type: '增加',
+									num: this.zan.length - this.lastWeekZan.length
+								} 
+							} else {
+								return {
+									type: '减少',
+									num: this.lastWeekZan.length - this.zan.length
+								}
+							}
+						},
+						chartInit: function() {
+					
+							var chart = echarts.init(document.getElementById('chart'));
+							chart.setOption({
+								radar: {
+									// shape: 'circle',
+									name: {
+										textStyle: {
+											color: '#fff',
+											backgroundColor: '#999',
+											borderRadius: 3,
+											padding: [3, 5]
+										}
+									},
+									indicator: this.getIndicator()
+								},
+								series: [{
+									type: 'radar',
+									data: [{
+										value: this.getChartMyScore(),
+									}]
+								}]
+							})
+						}
+					}
+				})
+			window.addEventListener('tabPageShow', function() {
+				document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+				var indexrole = JSON.parse(plus.storage.getItem('indexRole')).key;
+				if(indexrole==7){
+					 vm.getForFamily();			
+				   }
+				vm.$nextTick(function() {
+       				 vm.getStudentReport();
+				})
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		/*图片预览*/
+		
+		.mui-preview-image.mui-fullscreen {
+			position: fixed;
+			z-index: 20;
+			background-color: #000;
+		}
+		
+		.mui-preview-header,
+		.mui-preview-footer {
+			position: absolute;
+			width: 100%;
+			left: 0;
+			z-index: 10;
+		}
+		
+		.mui-preview-header {
+			height: 44px;
+			top: 0;
+		}
+		
+		.mui-preview-footer {
+			height: 50px;
+			bottom: 0px;
+		}
+		
+		.mui-preview-header .mui-preview-indicator {
+			display: block;
+			line-height: 25px;
+			color: #fff;
+			text-align: center;
+			margin: 15px auto 4;
+			width: 70px;
+			background-color: rgba(0, 0, 0, 0.4);
+			border-radius: 12px;
+			font-size: 16px;
+		}
+		
+		.mui-preview-image {
+			display: none;
+			-webkit-animation-duration: 0.5s;
+			animation-duration: 0.5s;
+			-webkit-animation-fill-mode: both;
+			animation-fill-mode: both;
+		}
+		
+		.mui-preview-image.mui-preview-in {
+			-webkit-animation-name: fadeIn;
+			animation-name: fadeIn;
+		}
+		
+		.mui-preview-image.mui-preview-out {
+			background: none;
+			-webkit-animation-name: fadeOut;
+			animation-name: fadeOut;
+		}
+		
+		.mui-preview-image.mui-preview-out .mui-preview-header,
+		.mui-preview-image.mui-preview-out .mui-preview-footer {
+			display: none;
+		}
+		
+		.mui-zoom-scroller {
+			position: absolute;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-align: center;
+			-webkit-align-items: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-webkit-justify-content: center;
+			justify-content: center;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			-webkit-backface-visibility: hidden;
+		}
+		
+		.mui-zoom {
+			-webkit-transform-style: preserve-3d;
+			transform-style: preserve-3d;
+		}
+		
+		.mui-slider .mui-slider-group .mui-slider-item img {
+			width: auto;
+			height: auto;
+			max-width: 100%;
+			max-height: 100%;
+		}
+		
+		.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+			width: 100%;
+		}
+		
+		.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+			display: inline-table;
+		}
+		
+		.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		
+		.mui-preview-loading {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			display: none;
+		}
+		
+		.mui-preview-loading.mui-active {
+			display: block;
+		}
+		
+		.mui-preview-loading .mui-spinner-white {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -25px;
+			margin-top: -25px;
+			height: 50px;
+			width: 50px;
+		}
+		
+		.mui-preview-image img.mui-transitioning {
+			-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+			transition: transform 0.5s ease, opacity 0.5s ease;
+		}
+		
+		@-webkit-keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		
+		@-webkit-keyframes fadeOut {
+			0% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+		
+		@keyframes fadeOut {
+			0% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+		/*图片预览*/
+		
+		.view-title {
+			padding: 10px 0 0px 15px;
+		}
+		
+		.view-box-line-one {
+			padding: 0.45rem 0;
+		}
+		.view-box-line-one p{
+			font-size:18px!important ;
+		}
+		.view-box-line-one p.color-black{
+			color: #444444!important;
+		}
+		.view-box-line-one p.color-gray{
+			font-size: 15px!important;
+		}
+		.icon-right {
+			color: rgb(143, 142, 148);
+			min-width: 80px;
+			text-align: right;
+		}
+		
+		textarea {
+			margin-bottom: 0;
+			color: rgb(143, 142, 148);
+			padding: 10px 41px 10px 15px;
+		}
+		
+		.mui-icon {
+			font-size: 16px;
+		}
+		
+		.up-img-box {
+			width: 2rem;
+			height: 2rem;
+			background: rgb(240, 240, 240);
+			line-height: 2rem;
+			text-align: center;
+		}
+		
+		.jindu-icon {
+			width: 0.3rem;
+			height: 0.3rem;
+			border-radius: 50%;
+		}
+		
+		.jindu-icon[type="0"] {
+			background: #9d9d9d;
+			color: #9d9d9d;
+		}
+		
+		.jindu-icon[type="1"] {
+			background: #2196F3;
+			color: #2196F3;
+		}
+		
+		.jindu-icon[type="-1"] {
+			background: #FF4747;
+			color: #DD524D;
+		}
+		
+		.jindu-box {
+			position: relative;
+			font-size: 14px;
+			padding-bottom: 0.8rem;
+		}
+		
+		.jindu-box .jindu-icon {
+			position: relative;
+			z-index: 3;
+		}
+		
+		/*.jindu-box:after {
+			content: '';
+			background: #8b8b8b;
+			position: absolute;
+			left: 0.14rem;
+			width: 1px;
+			height: 100%;
+			z-index: 2;
+		}*/
+		
+		.jindu-box:last-child:after {
+			content: '';
+			width: 0;
+			height: 0;
+		}
+		
+		.jindu-status {
+			width: 1.2rem;
+			margin-left: 0.2rem;
+		}
+		
+		.jindu-box .mark {
+			font-size: 17px;
+			padding-bottom: 5px;
+		}
+	</style>
+
+	<body class="bg-white">
+		
+		<div id="app" class="" style="padding-left:0.5rem ;padding-right: 0.5rem;">
+			<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		   </header>
+		     <div style="width:100%;padding: 60px 0 10px;z-index:3;position: fixed;background:#ffffff;box-sizing: border-box;">
+				   <h3 style="color: #444444;padding-bottom: 5px;font-size:32px!important;">值班签到</h3>
+		     </div>
+			<div class="sele-leave-person bg-white view-box" style="padding-top: 120px;border-bottom: 1px solid #F3F5F8;">
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="view-box-line-one">
+						<div class="flex just-center flex-y-center">
+							<p class="font-size-big color-black" v-if="info.id" v-text="getApplyName()"></p>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="view-box-line-one flex flex-y-center just-center">
+				<p class="color-black">值班日期</p>
+				<p class="font-size-big icon-right color-gray" v-text="getYmd(info.time)"></p>
+			</div>
+			<div class="view-box-line-one">
+				<div class="flex flex-y-center just-center">
+					<p class="font-size-big-super color-black">值班教师</p>
+					<p class="font-size-big icon-right color-gray" v-text="getTeacher(info.teacher)"></p>
+				</div>
+			</div>
+			<div class="view-box-line-one">
+				<div class="flex flex-y-center just-center">
+					<p class="font-size-big-super color-black">值班类型</p>
+					<p class="font-size-big icon-right color-gray" v-text="getType(info.type)"></p>
+				</div>
+			</div>
+			<div class="view-box-line-one">
+				<div class="flex flex-y-center just-center">
+					<p class="font-size-big-super color-black">校区</p>
+					<p class="font-size-big icon-right color-gray" v-text="getSchool(info.school_district_id)"></p>
+				</div>
+			</div>
+			<div class="view-box-line-one sele-leave-person" style="border-bottom: 1px solid #F3F5F8;">
+				<div class="flex flex-y-center just-center ">
+					<p class="color-black" v-text="getdes(info.des)"></p>
+				</div>
+			</div>
+			<div class="mg-btm-10 bg-white" style="padding:50px 0">
+				<button @tap="leaveSucc($event)" type="button" class="mui-btn mui-btn-primary" style="border-radius: 5px;width: 100%;line-height: 0.6rem;font-size: 17px;margin-bottom: 20px;" v-if="!state">签到</button>
+				<button type="button" class="mui-btn bg-gray" style="border-radius: 5px;width: 100%;line-height: 0.6rem;font-size: 17px;margin-bottom: 20px;" v-else>已签到</button>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/message.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script type="text/javascript" src="../../js/api/duty.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					info: {},
+					mark: '',
+					agree: '1',
+					director: '',
+					studentOffice: '',
+					indecCheckRoleId: null,
+					state:0
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					getTeacher:function(teacher){
+						if(teacher){
+							return teacher.rname;
+						}						
+					},
+                    getType:function(type){
+                    	   var obj={
+                                0:'干部',
+                                1:'教师'
+                               }
+                    	   return obj[type]                   	
+                    },
+                    getSchool:function(ids){
+                    	  var school ={
+                            0:"",
+                            1:'丁桥校区',
+                            2:'翠苑校区'
+                           }
+                    	  return school[ids];
+                    },
+					getApplyName: function() {
+						var classgradeName=[];
+						this.info.classgrades.map(function(item) {
+							classgradeName.push(item.name);
+						})
+						return classgradeName.join('、');
+					},
+					getYmd: function(time) {
+						if(time == null) return '';
+						if(parseInt(time) == 0) return '';
+						var date = new Date(parseInt(time));
+						return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate());
+
+					},
+					getdes:function(des){
+						if(des){
+							return des;
+						}else{
+							this.info.des ='未填写值班备注'
+							return des;
+						}
+					},
+					getInfo: function() {
+						var that = this;
+						this.info = JSON.parse(plus.storage.getItem('dutyDetail'));	
+						this.getdutyState();
+					},
+					//获取值班签到的状态
+					getdutyState:function(){
+						var that=this;
+						var params={
+							time:this.info.time
+						}
+						getDutyList({
+							data:params,
+							success:function(data){
+								var datas=data.data;
+								datas.forEach(function(item){
+									if(item.id==that.info.id){
+										that.state=item.sign_state
+									}
+								})
+							}
+						})
+					},
+					showDalog: function() {
+						var that = this;
+						var btnArray = ['否', '是'];
+							mui.confirm('确认签到?', '提示', btnArray, function(e) {
+								if(e.index == 1) {
+									that.messageDuty();
+								} 
+							})
+						// 前三个参数分别为 描述 input的默认值 标题 
+//						mui.prompt('请输入审批备注', '请输入备注', '请假审批', btnArray, function(e) {
+//							if(e.index == 1) {
+//								that.mark = e.value;
+//								that.goLeaveCheck();
+//							}
+//						})
+					},
+					messageDuty:function(){
+						var ids = JSON.parse(plus.storage.getItem('dutyDetail')).id;
+						var params={duty_id:ids};
+						messageDuty({
+							data:params,
+							success:function(){
+								mui.toast('签到成功');
+								var cid = plus.webview.currentWebview().opener();
+								mui.fire(cid, 'loadpage');
+								mui.back();
+							}
+						})
+						  
+					},
+					goLeaveCheck: function() {
+						var parms = {};
+						parms.agree = this.agree;
+						parms.id = this.info.id;
+						if(this.mark != '') parms.des = this.mark;
+						applyLeaveCheck({
+							data: {
+								agree: this.agree,
+								des: this.mark,
+								id: this.info.id
+							},
+							apiName: this.agree == '1' ? '请假审批通过' : '请假审批拒绝',
+							success: function(data) {
+								mui.toast('请假审批成功');
+								var cid = plus.webview.currentWebview().opener();
+								mui.fire(cid, 'loadpage');
+								mui.back();
+							}
+						})
+					},
+					leaveSucc: function(e) {
+						e.detail.gesture.preventDefault();
+						this.showDalog();
+						return;
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.getInfo();
+							that.role = getUserRole();
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

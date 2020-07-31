@@ -1,0 +1,427 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		.mui-content {
+			background: rgb(250, 250, 250);
+		}
+		
+		.view-box {
+			margin-top: 0.3rem;
+		}
+		
+		.view-title {
+			padding: 10px 0 10px 15px;
+		}
+		
+		.view-box-line-one {
+			padding: 17px 0;
+			font-size: 17px;
+		}
+		
+		.icon-right {
+			color: rgb(143, 142, 148);
+			min-width: 80px;
+			text-align: right;
+		}
+		
+		textarea {
+			margin-bottom: 0;
+			color: rgb(143, 142, 148);
+			padding: 10px 41px 10px 0;
+			font-size: 18px;
+		}
+		
+		.mui-icon {
+			font-size: 16px;
+		}
+		
+		.up-img-box {
+			width: 1.8rem;
+			height: 1.8rem;
+			background: rgb(240, 240, 240);
+			line-height: 1.8rem;
+			text-align: center;
+		}
+		
+		.up-img-box img {
+			width: 1.8rem;
+			height: 1.8rem;
+		}
+	</style>
+
+	<body class="bg-white">
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<!--<h1 class="mui-title color-black">请假发起</h1>-->
+		</header>
+		<div id="app" class="mui-content" style="background:#FFFFFF;padding-left: 0.5rem;padding-right:0.5rem ;">
+			
+				<div style="margin-top: 20px;margin-bottom: 20px;">
+					<h3 class="active blod" style="font-size: 32px;">请假发起</h3>
+				</div>
+			<div class="view-box-line-one" style="border-bottom: 1px solid #F3F5F8;">
+				<div @tap="showView('../students/selectStudents.html')" class="flex-1 flex just-center flex-y-center">
+					<div>
+						<p class="color-gray" v-if="seleScoreStudentList.length == 0" style="font-size: 18px;">请选择申请人</p>
+					    <p class="color-gray" v-else style="font-size: 18px;">
+						        <span v-for="item in seleScoreStudentList" v-text="item.accountData.rname + ' '" style="color: #444444;"></span>
+					      </p>
+					</div>
+					
+					<p class="flex flex-y-center">
+						<i class="material-icons">chevron_right</i>
+					</p>
+				</div>
+			</div>
+			<div class="view-box-line-one bg-white">
+
+				<div class="flex flex-y-center just-center" @tap="showLeaveTypePick">
+					<p class="color-gray color-black" style="font-size: 18px;">请假类型</p>
+					<p class="font-size-big flex flex-y-center">
+						<span v-text="leaveTypePick.name ? leaveTypePick.name : ''"></span>
+						<i class="material-icons">chevron_right</i>
+					</p>
+				</div>
+
+			</div>
+			<div class="view-box-line-one bg-white" s>
+				<div class="flex flex-y-center just-center" @tap="seleDate(1)">
+					<p class=" color-black" style="font-size: 18px;">开始时间</p>
+					<p class="font-size-big" v-if="!startHour"><i class="material-icons">chevron_right</i></p>
+					<p class="font-size-big" v-else v-html="startDate + '&nbsp' + startHour"></p>
+				</div>
+			</div>
+			<div class="view-box-line-one bg-white">
+				<div class="flex flex-y-center just-center" @tap="seleDate(2)">
+					<p class="color-black" style="font-size: 18px;">结束时间</p>
+					<p class="font-size-big" v-if="!endHour"><i class="material-icons">chevron_right</i></p>
+					<p class="font-size-big" v-else v-html="endDate+ '&nbsp' +endHour"></p>
+				</div>
+			</div>
+			<div class="view-box-line-one bg-white" style="border-bottom:1px solid #F3F5F8;margin-bottom: 25px;">
+				<div class="flex flex-y-center just-center">
+					<p class="color-black" style="font-size: 18px;">请假时长</p>
+					<p class="font-size-big" v-text="qingjiaTime"></p>
+				</div>
+			</div>
+			
+			<div class="sele-leave-person bg-white">
+				
+				<div class="up-img-box" style="margin:0" @tap="upImg">
+					<i v-if="imgSrc == ''" class="mui-icon mui-icon-plusempty font-size-big-plus-super-x"></i>
+					<img v-else :src="window.imgpath + imgSrc" alt="" />
+				</div>
+			</div>
+			<div class="sele-leave-person bg-white" style="border-bottom: 1px solid #F3F5F8;margin-top: 20px;">
+				<div class="flex flex-y-center just-center ">
+					<textarea v-model="mark" name="" rows="1" cols="" placeholder="可填写请假事由" style="color: #444444;"></textarea>
+				</div>
+			</div>
+			<div class="mg-t-10 mg-btm-10 bg-white" style="padding:20px 0">
+				<button @tap="applyLeave" type="button" class="mui-btn mui-btn-primary school_btn">提交</button>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/leave.js"></script>
+		<script src="../../js/api/upfile.js"></script>
+		<script type="text/javascript">
+			mui.init();
+
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+
+			function timestampToTime(timestamp) {
+				var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				Y = date.getFullYear() + '-';
+				M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+				D = date.getDate() + ' ';
+				h = date.getHours() + ':';
+				m = date.getMinutes() + ':';
+				s = date.getSeconds();
+				return Y + M + D + h + m + s;
+			}
+			var vm = new Vue({
+				el: '#app',
+				data: {
+					classgrade_id:'',//被打分的班级
+					seleScoreStudentList: [],
+					startDate: null,
+					startHour: null,
+					endDate: null,
+					endHour: null,
+					qingjiaTime: null,
+					mark: '',
+					imgSrc: '',
+					leaveTypePick: {
+						name: '',
+						id: null
+					},
+					typeList: [{
+						value: '0',
+						text: '其他'
+					}, {
+						value: '1',
+						text: ' 事假'
+					}, {
+						value: '2',
+						text: '病假'
+					}, {
+						value: '3',
+						text: '活动'
+					}],
+				},
+				watch: {
+					startHour: function() {
+						this.endDate = null;
+						this.endHour = null;
+//						if(this.endHour) this.getQjTimeDmh();
+                        this.qingjiaTime='';
+					},
+					endHour: function() {
+						if(this.startHour) this.getQjTimeDmh();
+					},
+					startDate:function(){
+						this.endDate = null;
+						this.endHour = null;
+						this.qingjiaTime='';
+//						if(this.endHour) this.getQjTimeDmh();
+					},
+					endDate:function(){
+						if(this.startHour&&this.endHour) this.getQjTimeDmh();
+					}
+					
+				},
+				methods: {
+					upFileImg: function() {
+						var that = this;
+						var task = upFile(function(data) {
+							console.log(window.imgpath + data);
+							that.imgSrc = data;
+						});
+						// 上传图片的name属性 是这个的key
+						task.addFile(this.imgSrc, {
+							key: "uploadFile"
+						});
+						task.start();
+					},
+					applyLeave: function() {
+						if(this.seleScoreStudentList.length == 0) {
+							mui.toast('请选择请假申请人');
+							return;
+						}
+						if(this.leaveTypePick.id === null) {
+							mui.toast('请选择请假类型');
+							return;
+						}
+						if(this.qingjiaTime === null) {
+							mui.toast('请选择请假时间');
+							return;
+						}
+						plus.nativeUI.showWaiting( "提交中..." )
+						applyLeave({
+							data: {
+								type: this.leaveTypePick.id,
+								apply_account_ids: this.getSeleStudentId().join('-'),
+								s_time: this.startTime,
+								e_time: this.endTime,
+								des: this.mark,
+								file_path: this.imgSrc,
+								classgrade_id:this.classgrade_id
+							},
+							success: function(data) {
+//								mui.toast('发起请假成功');
+									plus.storage.setItem('scopeSuccBack', JSON.stringify({
+												url: '../leave/index.html',
+												id: 'view/leave/index.html'
+											}));
+								    mui.openWindow({
+												url: '../component/leave-succ.html',
+												id: 'leave-succ.html',
+											});
+//								var cid = plus.webview.currentWebview().opener();
+//								mui.fire(cid, 'loadpage');
+//								mui.back();
+							}
+						})
+					},
+					//获取学生id
+					getSeleStudentId: function() {
+						return this.seleScoreStudentList.map(function(item) {
+							return item.id;
+						})
+					},
+					//获取学生所在的班级
+					getSelectClassgrade:function(){
+						
+					},
+					getQjTimeDmh: function() {
+						var startTamp = new Date(this.startDate.replace(/-/g, '/') + ' ' + this.startHour).getTime();
+						var endTamp = new Date(this.endDate.replace(/-/g, '/') + ' ' + this.endHour).getTime();
+						this.startTime = startTamp;
+						this.endTime = endTamp;
+						var cha = parseInt((endTamp - startTamp) / 1000);
+						var d = parseInt(cha / 3600 / 24);
+						var h = parseInt((cha / 3600) % 24);
+						var m = parseInt((cha / 60) % 60);
+						var s = parseInt(cha % 60);
+						this.qingjiaTime = d + '天' + h + '时' + m + '分';
+					},
+					getStartDateYmd: function() {
+						return {
+							y: new Date(this.startDate).getFullYear(),
+							m: new Date(this.startDate).getMonth(),
+							d: new Date(this.startDate).getDate()
+						}
+					},
+					seleNativeHours: function(type) {
+						var that = this;
+						var dTime = new Date();
+						dTime.setHours(6, 0);
+						plus.nativeUI.pickTime(function(e) {
+							var d = e.date;
+							if(type == 1) {
+								that.startHour = buqi(d.getHours()) + ":" + buqi(d.getMinutes());
+							} else {
+								that.endHour = buqi(d.getHours()) + ":" + buqi(d.getMinutes());
+							}
+							//							info.innerText = "您选择的时间是：" + d.getHours() + ":" + d.getMinutes();
+						}, function(e) {
+							//							info.innerText = "您没有选择时间"
+						}, {
+							title: "请选择时间",
+							is24Hour: true,
+							time: dTime
+						});
+					},
+					seleNativeTime: function(type) {
+						var that = this;
+						var dDate = new Date();
+						dDate.setFullYear(dDate.getFullYear(), dDate.getMonth(), dDate.getDate());
+						var minDate = new Date();
+						if(type == 1) {
+							minDate.setFullYear(2010, 0, 1);
+						}
+						if(type == 2 && that.startDate) {
+							minDate.setFullYear(that.getStartDateYmd().y, that.getStartDateYmd().m, that.getStartDateYmd().d);
+						}
+
+						var maxDate = new Date();
+						maxDate.setFullYear(2099, 11, 31);
+						plus.nativeUI.pickDate(function(e) {
+							var d = e.date;
+							if(type == 1) {
+								that.startDate = d.getFullYear() + "-" + buqi(d.getMonth() + 1) + "-" + buqi(d.getDate());
+							} else {
+								that.endDate = d.getFullYear() + "-" + buqi(d.getMonth() + 1) + "-" + buqi(d.getDate());
+							}
+							that.seleNativeHours(type);
+						}, function(e) {
+
+						}, {
+							title: "请选择日期",
+							date: dDate,
+							minDate: minDate,
+							maxDate: maxDate
+						});
+					},
+					seleDate: function(type) {
+						if(type==2){
+							if(!this.startDate){
+							  mui.toast('请先选择开始时间');	
+							  return;
+							}	
+						}
+						this.seleNativeTime(type);
+					},
+					appendByCamera: function() {
+						var that = this;
+						plus.camera.getCamera().captureImage(function(e) {
+							plus.io.resolveLocalFileSystemURL(e, function(entry) {
+								var path = entry.toLocalURL();
+								that.imgSrc = path;
+								that.upFileImg();
+							}, function(e) {
+								mui.toast("读取拍照文件错误：" + e.message);
+							});
+
+						});
+					},
+					appendByGallery: function() {
+						var that = this;
+						plus.gallery.pick(function(path) {
+							that.imgSrc = path;
+							that.upFileImg();
+						});
+					},
+					upImg: function() {
+						var that = this;
+						plus.nativeUI.actionSheet({
+							cancel: "取消",
+							buttons: [{
+									title: "拍照"
+								},
+								{
+									title: "从相册中选择"
+								}
+							]
+						}, function(e) { //1 是拍照  2 从相册中选择 
+							switch(e.index) {
+								case 1:
+									that.appendByCamera();
+									break;
+								case 2:
+									that.appendByGallery();
+									break;
+							}
+						});
+					},
+					showView: function(path) {
+						mui.openWindow({
+							url: path,
+							id: 'selectStudents.html'
+						})
+					},
+					showLeaveTypePick: function() {
+						var that = this;
+						this.leaveTypePicker = new mui.PopPicker();
+						this.leaveTypePicker.setData(this.typeList);
+						this.leaveTypePicker.show(function(items) {
+							that.leaveTypePick.name = items[0].text;
+							that.leaveTypePick.id = items[0].value;
+						});
+					},
+				}
+			})
+			window.addEventListener('seleStudent', function(event) {
+
+				vm.seleScoreStudentList = JSON.parse(event.detail.list);
+				if(vm.seleScoreStudentList&&vm.seleScoreStudentList.length>0){
+					vm.classgrade_id=vm.seleScoreStudentList[0].accountData.identitysData['6'].classgrades[0].id;
+				}
+				
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,458 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+        <link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		#app{
+			padding: 10px 0 0;
+			color: #101010;
+		}
+		.mui-table-view .mui-media-body p {
+			line-height: 0.5rem;
+			color: #101010!important;
+			font-size: 0.28rem;
+		}
+		.mui-content .head {
+			min-height: 90px;
+			padding: 30px 0 30px;
+			text-align: left;
+			position: relative;
+			overflow: hidden;
+		}
+		.mui-content .head .headImg{
+			position: absolute;
+			right: 0;
+		 }
+		
+		.mui-content .head img {
+			width: 60px;
+		}
+		
+		.mui-content div.type>p {
+			font-size: 17px;
+			color: #101010;
+			margin-bottom: 0.35rem;
+		}
+		
+		.mui-content div.type {
+			margin-bottom: 0.5rem;
+		}
+		
+		.mui-content div.type>span {
+			font-size: 14px;
+		}
+		.mui-content div.type p.mui-ellipsis{
+			line-height: 0.5rem;
+			color: #101010;
+			font-size: 0.28rem;
+		}
+		.mui-badge {
+			/*height: 0.4rem;
+			line-height: 0.4rem;*/
+			/*font-size: 12px;*/
+			/*padding: 0 0.3rem;*/
+			/*box-shadow: 2px 2px 7px -3px #2196f3;*/
+			margin-right: 0.35rem;
+			display: inline-block;
+			font-size: 14px;
+			/*border-radius: 100px!important;*/
+			
+		}
+		#app .mui-badge.userRoleNow{
+			background: transparent;
+			border-radius:0 ;
+			color: #8f8d94;
+		}
+		.type .mui-table-view-cell>a:not(.mui-btn){
+			margin: 0 0;
+		}
+		.message {
+			position: relative;
+		}
+		.message[type="1"]:after{
+			content: '';
+			width: 6px;
+			height: 6px;
+			background: #D00000;
+			border-radius: 50%;
+			position: absolute;
+			top: -2px;
+			right: -4px;
+		}
+		.mui-badge {}
+		.weidu-box {
+			background: red;
+			border-radius: 50%;
+			width: .48rem;
+			height: .48rem;
+			color: #FFFFFF;
+			text-align: center;
+			line-height: .48rem;
+		}
+		.Listwrap{
+			position: relative;
+			padding-left: 0.8rem;
+			color: #101010;
+		}
+		.iconset{
+			color: #2196F3;
+			font-size: 19px!important;
+			margin-right: 15px;
+			vertical-align: top;
+			position: absolute;
+			left: 0;
+			top:-0.015rem;
+		}
+		.mui-table-view-cell{
+		  margin-bottom: 30px;
+		  padding-left: 0.3rem;
+		  padding-right: 0;	
+	
+		  
+		}
+		span.red{
+			color: #FF4747!important;
+		}
+		span.blue{
+			color: #2196F3!important;
+		}
+	</style>
+
+	<body>
+		<div id="app" class="mui-content" style="">
+				<div class="mui-content-padded" style="margin-left: 0;margin-right: 0;padding-left: 0.35rem;padding-right: 0.35rem;">
+				<div class="head tc" @tap="showView(chooseInformation)" style="border-bottom: 1px solid #F3F5F8;min-height: 120px;">
+					<div style="float:left;" style="">
+						<h3 v-text="role.key=='7'?userInfo.rname+'家长':userInfo.rname" style="color: #101010;font-size: 28px;" v-if="userInfo.rname"></h3>
+						<h3 style="color: #101010;font-size: 16px;" v-else v-text="username"></h3>
+						<p v-text="userInfo.identitysData[6].st_main_number" v-if="role.key=='6'"></p>
+						<p v-text="userInfo.identitysData[6].classgrades[0].name" v-if="role.key=='6'"></p>
+						<p v-for="item in posts" v-text="item.name"></p>
+						
+					</div>
+					<span class="headImg"style="float:right;border-radius:50%;overflow: hidden ;height: 60px;width: 60px;top:18px">
+						  <img id="head-img" :src="window.imgpath + userPhoto" alt="" />
+					</span>
+					
+				</div>
+			
+			</div>
+			<ul class="mui-table-view mui-table-view-chevron" style="margin-top:0.8rem ;padding-left:0 ;padding-right: 0;">
+			
+				<li class="mui-table-view-cell" v-if="role.key==4||role.key==12">
+					<div class="mui-navigate-right" @tap="showView('classgradeScoreHistory.html')">
+						<div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important;top:0">format_list_bulleted</i>班内打分记录</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" v-if="role.key!=6&&role.key!=7">
+					<div class="mui-navigate-right" @tap="showView('../duty/index.html')">
+						<div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important">timelapse</i>晚自修</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-navigate-right" @tap="showView('../message/messageList.html')">
+						<span class="message Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important;">mail_outline</i>消息中心</span>
+						<i  v-if="messageLen > 0" class="text-i mui-pull-right" style="color: #FF4747;" v-text="messageTip"></i>
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell" @tap="showView('ApplyLeave.html')" v-if="role.key==6">
+					<div class="mui-navigate-right">
+					     <div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important;">launch</i>住校申请</div>
+					</div>
+					<span class="mui-badge userRoleNow" :class="{red:RedState,blue:BlueState}" v-text="dormitoryState"></span>
+				</li>
+				<li class="mui-table-view-cell" @tap="showView('editRole.html')">
+					<div class="mui-navigate-right">
+					     <div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important;">perm_identity</i>我的权限</div>
+					</div>
+					<span class="mui-badge userRoleNow" v-for="(item,index) in role" v-if="index == 'name'" v-text="item"></span>
+				</li>
+				<li class="mui-table-view-cell" @tap="showView('Mycode.html')"  v-if="role.key==6">
+					<div class="mui-navigate-right">
+					     <div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important;">border_outer</i>我的二维码</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-navigate-right" @tap="showView('setting.html')">
+						<div class="Listwrap"><i class="material-icons iconset" style="margin-left: 0.1rem;font-size:22px!important">crop_free</i>设置</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/user.js"></script>
+		<script src="../../js/api/upfile.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					username: '',
+					role: '',
+					userInfo: {},
+					userPhoto: '',
+					messageLen: 0,
+					messageTip:"",
+					posts:[],
+					chooseInformation:"person-information.html",
+					dormitoryState:'',
+					RedState:false,
+					BlueState:false
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					userInit: function() {
+						this.role = JSON.parse(plus.storage.getItem('indexRole'));
+						if(this.role.key =='7'){
+							this.username = plus.storage.getItem('Forfamily_username');
+							this.userInfo = JSON.parse(plus.storage.getItem('Forfamily_userinfo'));
+							this.chooseInformation="../student/information.html"
+						}else{
+							this.userInfo = JSON.parse(plus.storage.getItem('userinfo'));
+						    this.username = plus.storage.getItem('username');
+						    if(this.role.key =='6'){
+						    	 this.chooseInformation="../student/information.html"
+						    }else{
+						    	 this.chooseInformation="person-information.html"
+						    	 this.getposts();
+						    }						   
+						}
+						this.userPhoto =  this.userInfo.photopath;						
+					},
+					//获取岗位
+					getposts:function(){
+						var arr=[];
+						var arr1=[];
+						var identitysData=this.userInfo.identitysData;
+						    console.log(this.userInfo);
+						for(i in identitysData){
+						    arr.push(identitysData[i].posts);
+                            if(i==4){this.fill_classGrade(identitysData[i].classgrades,arr1)}//班主任
+                            if(i==8){this.fill_group(identitysData[i].majorGroup,arr1)}	//专业部
+                            if(i==12){this.fill_Vice_classGrade(identitysData[i].classgrades,arr1)}//副班主任
+						}
+                        	for(var i=0;i<arr[arr.length-1].length;i++){
+							arr1.push({name:arr[arr.length-1][i].name})
+						    }
+						this.fill_Post(arr1);						
+					},
+					//填充副班主任
+					fill_Vice_classGrade:function(classgrade,posts_bind){
+						 if(classgrade){
+                              for(var i=0;i<classgrade.length;i++){
+                              	    if(classgrade[i].identity_id!=0){
+                              	    	 posts_bind.push({name:classgrade[i].name+'副班主任'});
+                              	    }   
+                               }
+                            }
+                         return posts_bind;
+					},
+					//填充班级岗位
+					fill_classGrade:function(classgrade,posts_bind){
+						 if(classgrade){
+                              for(var i=0;i<classgrade.length;i++){
+                              	    if(classgrade[i].identity_id!=0){
+                              	    	 posts_bind.push({name:classgrade[i].name+'班主任'});
+                              	    }   
+                               }
+                            }
+                         return posts_bind;
+					},
+					//填充专业部岗位
+					fill_group:function(majorGroup,posts_bind){
+						 if(majorGroup){
+                                posts_bind.push({name:majorGroup.name+'专业部负责人'});
+                           }
+                         return posts_bind;
+					},
+                    //填充岗位数组
+                    fill_Post:function(arr){                    	
+                    	if(arr.length<=3){
+                    		this.posts = arr;	
+                    	}else{
+                    		this.posts = arr.splice(0,3);
+                    	}                    	
+                    },
+					upFileImg: function() {
+						var that = this;
+						var task = upFile(function(data) {
+							console.log(data);
+							that.userPhoto = data;
+							that.editPhoto();
+						});
+						// 上传图片的name属性 是这个的key
+						task.addFile(this.userPhoto, {
+							key: "uploadFile"
+						});
+						task.start();
+					},
+					editPhoto: function() {
+						editPhoto({
+							data: {
+								photopath: this.userPhoto,
+								taid: plus.storage.getItem('faid')
+							},
+							success: function(data) {
+								console.log('修改头像成功');
+							}
+						})
+					},
+					appendByCamera: function() {
+						var that = this;
+						plus.camera.getCamera().captureImage(function(e) {
+							plus.io.resolveLocalFileSystemURL(e, function(entry) {
+								var path = entry.toLocalURL();
+								that.userPhoto = path;
+								that.upFileImg();
+							}, function(e) {
+								mui.toast("读取拍照文件错误：" + e.message);
+							});
+						});
+					},
+					appendByGallery: function() {
+						var that = this;
+						plus.gallery.pick(function(path) {
+							that.userPhoto = path;
+							that.upFileImg();
+						});
+					},
+					upImg: function() {
+						var that = this;
+						plus.nativeUI.actionSheet({
+							cancel: "取消",
+							buttons: [{
+									title: "拍照"
+								},
+								{
+									title: "从相册中选择"
+								}
+							]
+						}, function(e) { //1 是拍照  2 从相册中选择 
+							switch(e.index) {
+								case 1:
+									that.appendByCamera();
+									break;
+								case 2:
+									that.appendByGallery();
+									break;
+							}
+						});
+					},
+					showView: function(path) {
+						mui.openWindow({
+							url: path,
+							id: path
+						})
+					},
+					getUserInfo: function() {
+						var that = this;
+						getUserInfo({
+							data: {},
+							success: function(data) {
+								that.messageLen = data.data.messageCount;
+								that.messageTip = that.messageLen+"条未读消息"
+								if(that.role.key =='7'){
+									 that.username = plus.storage.getItem('Forfamily_username');
+							         that.userInfo = JSON.parse(plus.storage.getItem('Forfamily_userinfo'));
+							         that.chooseInformation="../student/information.html";
+							         that.userPhoto =  that.userInfo.photopath;
+								  }else{
+									 that.userInfo = data.data.accountData;
+								     that.userPhoto = that.userInfo.photopath;								    
+								     that.userPhoto =  that.userInfo.photopath;
+								     if(that.role.key =='6'){
+								     	 that.chooseInformation="../student/information.html";
+								     }else{
+								     	 that.chooseInformation="person-information.html";
+								     	 that.getposts();
+								     }
+								 }
+								var role = that.getRole(data.data.accountData.identitysData);
+								plus.storage.setItem('role', role.role);
+//								plus.storage.setItem('indexRole',role.indexrole);  
+								plus.storage.setItem('userinfo',JSON.stringify(data.data.accountData));
+								
+							}
+						})
+					},
+					getRole: function(item) {
+							var role = [];
+							for(var i in item) {
+								role.push({
+									name: item[i].name,
+									key: item[i].key
+								});
+							}
+							return {
+								role: JSON.stringify(role),
+								indexrole: JSON.stringify(role[0])
+							}
+					},
+					//获取申请住宿状态
+					getDormitoryState:function(){
+					  if(this.role.key =='6'){
+					  	    const that = this;
+					  	    const params={
+					  	    	student_id:plus.storage.getItem('faid')
+					  	    }
+					        getDormitoryState({
+					   	        data:params,
+					   	        success:function(data){
+					   	        	const list = data.data.list;
+					   	        	if(list&&list.length>0){
+					   	        		if(list[0].state==1){
+					   	        			that.dormitoryState="已审批"
+					   	        			that.RedState=false;
+					   	        			that.BlueState = false;
+					   	        			}
+					   	        	    if(list[0].state==-1){
+					   	        	    	that.dormitoryState="已拒绝";
+					   	        	    	that.RedState=true;
+					   	        			that.BlueState = false;
+					   	        	    	}
+					   	        	    if(list[0].state== 0){
+					   	        	    	that.dormitoryState="待审批"
+					   	        	    	that.RedState=false;
+					   	        			that.BlueState = true;
+					   	        	    	}
+					   	        	}else{
+					   	        		that.dormitoryState="未申请"
+					   	        	}
+					   	        	
+					   	        }
+					        })
+					  }
+					},
+					plusReady: function() {	
+						var that = this;
+						mui.plusReady(function() {
+							that.userInit();
+						})
+					}
+				}
+			})
+			window.addEventListener('tabPageShow', function() {
+				document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+				vm.getUserInfo();
+				vm.getDormitoryState();
+			})
+		</script>
+	</body>
+
+</html>

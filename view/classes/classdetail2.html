@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		header span {
+			padding: 5px;
+		}
+		
+		.total-score {
+			padding: 0.35rem 0 0.5rem;
+		}
+		
+		.total-score p {
+			color: #2D2F38;
+		}
+		/*score-type*/
+		
+		#score-type.mui-slider {
+			padding: 0 15px;
+		}
+		
+		#score-type.mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+			background: #2196F3;
+			color: #fff;
+			border-radius: 20px;
+			box-shadow: 0px 0px 4px 1px #B7DBFF;
+		}
+		
+		.mui-segmented-control.mui-scroll-wrapper .mui-scroll {
+			min-width: 100%;
+		}
+		
+		#score-type .mui-segmented-control.mui-scroll-wrapper .mui-control-item {
+			padding: 0 12px;
+		}
+		
+		#score-type .mui-segmented-control .mui-control-item {
+			line-height: 26px;
+		}
+		/*scoreshow-box*/
+		
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group {
+			margin-bottom: 150px;
+		}
+		
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item {
+			border-bottom: 0;
+		}
+		
+		.mui-slider-group .mui-control-content {
+			height: 100%;
+			min-height: 215px;
+			padding-top: 18px;
+		}
+		/*aside*/
+		
+		#offCanvasWrapper aside .mui-scroll-wrapper {
+			background: #fff;
+		}
+		
+		.week-sele {
+			border-bottom: 1px solid #eeeeee;
+		}
+		
+		.week-sele>div {
+			padding: 10px 0;
+		}
+		
+		.week-sele>div.active {
+			border-bottom: 2px solid #2196F3;
+		}
+		
+		.mui-table-view:after {
+			background: transparent;
+		}
+	</style>
+
+	<body>
+		<div class="mui-off-canvas-wrap mui-draggable mui-slide-in" id="offCanvasWrapper">
+			<aside class="mui-off-canvas-right">
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<!--aside-cont-->
+						<p class="title">筛选</p>
+						<div class="from">
+							<div>
+								<p>评比主题</p>
+								<div class="flex just-center" >
+									<span></span>
+									<i class="mui-icon mui-icon-arrowdown"></i>
+								</div>
+							</div>
+							<div>
+								<p>学期</p>
+								<div class="flex just-center" @tap="xueqiList">
+									<span v-text="xueqiPick.name"></span>
+									<i class="mui-icon mui-icon-arrowdown"></i>
+								</div>
+							</div>
+							<div>
+								<p>周</p>
+								<div class="flex just-center" @tap="showWeekPicker">
+									<span v-text="weekPick.name"></span>
+									<i class="mui-icon mui-icon-arrowdown"></i>
+								</div>
+							</div>
+						</div>
+						<div class="btn">
+							<button type="button" class="mui-btn bg-gray color-gray mg-r-10">重置</button>
+							<button type="button" class="mui-btn bg-gray main-color" id="">确定</button>
+						</div>
+					</div>
+				</div>
+			</aside>
+			<!-- main-box -->
+			<div class="mui-inner-wrap">
+				<!-- main-title -->
+				<header class="mui-bar mui-bar-nav bg-white">
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title color-black" v-text="info.name"></h1>
+					<span class="mui-pull-right font-size-small" id="ce-slide"><i class="mui-icon mui-icon-arrowdown font-size-mid"></i>五项评比</span>
+				</header>
+
+				<div class="mui-content">
+					<div class="mui-scroll" style="height: 100%;">
+						<!-- main-cont -->
+						<div class="total-score tc">
+							<p class="font-size-big bold mb5px">总分</p>
+							<p class="main-color font-size-big-plus-super-x mg-t-10">780</p>
+						</div>
+						<div id="score-type" class="mui-content mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+							<div class="mui-scroll">
+								<a class="mui-control-item" @tap="defaultScoreType = item.id" :class="item.id == defaultScoreType ? 'mui-active' : ''" v-for="item in allScoreType" v-text="item.name"></a>
+							</div>
+						</div>
+
+						<div class="week-sele flex ">
+							<div class="flex-1 tc font-size-mid" :class="index == defaultWeekIndex ? 'active' : ''" v-for="(item,index) in weekList" v-text="item.name" @tap="seleWeekIndex(item,index)"></div>
+						</div>
+						<div class="score-detail">
+							<ul class="mui-table-view mb30 h1">
+								<li class="mui-table-view-cell ">
+									<p class="color-red font-size-big mg-btm-10">合计</p>
+									<div class="mui-media-body">
+										<p class='mui-ellipsis'>
+											总分:<span>80</span> 加减分:
+											<span>+8</span> 得分:
+											<span>88</span>
+										</p>
+									</div>
+								</li>
+								<li class="mui-table-view-cell ">
+									<a class="mui-navigate-right" @tap="">
+										<p class="main-color font-size-big mg-btm-10">迟到</p>
+										<div class="mui-media-body">
+											<p class='mui-ellipsis'>
+												总分:<span>80</span> 加减分:
+												<span>+8</span> 得分:
+												<span>88</span>
+											</p>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- off-canvas backdrop -->
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script>
+			//1 获取班级列表默认有一个评比项
+			//2 点击某一个班级进入班级详情 根据这个评比项的id去获取评比项子集
+			//3 
+			mui.init({
+				swipeBack: false
+			});
+			var vm = new Vue({
+				el: '#offCanvasWrapper',
+				data: {
+					info: {},
+					classDetailInfo: {},
+					allScoreType: [],
+					defaultScoreType: null,
+					defaultWeekIndex: 0,
+					weekList: [{
+						name: '整周',
+						id: 7
+					}, {
+						name: '周一',
+						id: 1
+					}, {
+						name: '周二',
+						id: 2
+					}, {
+						name: '周三',
+						id: 3
+					}, {
+						name: '周四',
+						id: 4
+					}, {
+						name: '周五️',
+						id: 5
+					}],
+					xueqiPick: {
+						id:'',
+						name: ''
+					},
+					weekPick: {
+						id:'',
+						name: ''
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+					this.setDefaultScoreType();
+					this.cehuaInit();
+				},
+				methods: {
+					getClassDetail: function() {
+						getClassDetail({
+							data: {
+								classgrade_id: this.info.id
+							},
+							success: function(data) {
+
+							}
+						})
+					},
+					cehuaInit: function() {
+						offCanvasWrapper = mui('#offCanvasWrapper')
+						document.getElementById('ce-slide').addEventListener('tap', function() {
+							offCanvasWrapper.offCanvas('show').isShown('right');
+						});
+						//主界面容器
+						var offCanvasInner = offCanvasWrapper[0].querySelector('.mui-inner-wrap');
+						offCanvasInner.addEventListener('drag', function(event) {
+							event.stopPropagation();
+						});
+					},
+					setDefaultScoreType: function() {
+						this.defaultScoreType = this.allScoreType[0].id;
+					},
+					seleWeekIndex: function(item, index) {
+						this.defaultWeekIndex = index;
+					},
+					showView: function(path) {
+						mui.openWindow({
+							url: path,
+							id: path,
+							extras: {
+								name: this.title
+							}
+						})
+					},
+					getXueqiList: function(cb) {
+						getClassTime({
+							data: {},
+							success: function(data) {
+								cb(data);
+							}
+						})
+					},
+					xueqiList: function() {
+						var that = this;
+						this.getXueqiList(function(data) {
+							that.xueqiPicker = new mui.PopPicker();
+							var arr = [];
+							//mui 下拉框必须要写个value text 醉了 生成value text数组
+							data.data.forEach(function(item) {
+								arr.push({
+									value: item.id,
+									text: item.name
+								})
+							});
+							that.xueqiPicker.setData(arr);
+							that.xueqiPicker.show(function(items) {
+								that.xueqiPick.name = items[0].text;
+								that.xueqiPick.id = items[0].value;
+							});	
+						})
+					},
+					getWeekList: function(cb) {
+						getClassTime({
+							data: {
+								superid: this.xueqiPick.id
+							},
+							success: function(data) {
+								cb(data);
+							}
+						})
+					},
+					showWeekPicker: function() {
+						var that = this;
+						this.getWeekList(function(data) {
+							that.weekPicker = new mui.PopPicker();
+							var arr = [];
+							//mui 下拉框必须要写个value text 醉了 生成value text数组
+							data.data.forEach(function(item) {
+								arr.push({
+									value: item.id,
+									text: item.name
+								})
+							});
+							that.weekPicker.setData(arr);
+							that.weekPicker.show(function(items) {
+								that.weekPick.name = items[0].text;
+								that.weekPick.id = items[0].value;
+							});	
+						})
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.info = JSON.parse(plus.storage.getItem('classDetail'));
+							that.getClassDetail();
+							plus.webview.currentWebview().setStyle({
+								'popGesture': 'hide'
+							});
+						})
+					}
+				},
+
+			})
+			window.addEventListener('detailsData', function(event) {
+				vm.info = JSON.parse(plus.storage.getItem('classDetail'));
+				vm.getClassDetail();
+			})
+		</script>
+	</body>
+
+</html>

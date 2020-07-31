@@ -1,0 +1,677 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+        <script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		.mui-content-padded {
+			margin: 0.4rem;
+		}
+		.mui-table-view:after {
+			height: 0;
+		}
+		
+		.set-score {
+			position: fixed;
+			bottom: 0.6rem;
+			right: 10px;
+			z-index: 3;
+			background: #2196F3;
+			color: #fff;
+			border-radius: 100%;
+			width: 60px;
+			height: 60px;
+			box-shadow: 2px 2px 7px -2px #2196F3;
+		}
+		
+		.set-score i {
+			font-size: 30px;
+		}
+		
+		.mui-badge {
+			width: 0.85rem;
+			height: 0.71rem;
+			font-size: 0.24rem;
+		}
+		
+		.leave-box {
+			/*padding: 0 0.3rem;*/
+			margin: 0.46rem 0;
+			/*border-bottom: 1px solid #F3F5F8;*/
+			/*padding-bottom: 10px;*/
+		}
+		
+		.leave-box .mui-badge[type="2"] {
+			background: #FF4747;
+		}
+		
+		.leave-box .mui-badge[type="3"] {
+			background: #ff9800;
+		}
+		
+		.leave-box .mui-badge[type="1"] {
+			background: #2196f3;
+		}
+		
+		.leave-box .mui-badge[type="0"] {
+			background: #8b8b8b;
+		}
+		
+		.mui-badge {
+			margin-top:0.1rem ;
+			min-width: 0.7rem;
+			min-height: 0.7rem;
+			max-width: 0.7rem;
+			max-height: 0.7rem;
+			font-size: 0.2rem;
+			
+		}
+		
+		span.active {
+			color: #101010;
+			font-size: 36px!important;
+		}
+		
+		.textRight {
+			text-align: right;
+		}
+		.statasIcon {
+			display: inline-block;
+			background: #C3C3C3;
+			padding: 0 0.15rem;
+			color: #FFFFFF;
+			border-radius: 4px;
+			margin-left: 10px;
+		}
+	</style>
+
+	<body>
+		<div id="app" class="mui-content">
+			 <header class="mui-bar mui-bar-nav bg-white" >
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<i class="material-icons" style="margin-right: 0.63rem;font-size: 30px;color: #101010;position: absolute;right: 40px;top:8px;" @tap="showView('new-leave.html')" v-if="role && checkRole('4') && pageIndex == 1">playlist_add</i>
+					<i class="material-icons" id="shaixuan" style="font-size: 30px;color: #101010;position: absolute;top:8px;right: 0.3rem;">more_horiz</i>
+				</header>
+			<div class="top-title">
+				<div class="mui-content-padded">
+					<div class="tr" style="position: relative;height: 30px;">
+						<!--<i class="material-icons" style="margin-right: 0.63rem;font-size: 19px;color: #444444;position: absolute;right: 30px;" @tap="showView('new-leave.html')" v-if="role && checkRole('4') && pageIndex == 1">border_color</i>
+						<i class="material-icons" id="shaixuan" style="font-size: 30px;color: #444444;position: absolute;top:-6px;right: 0;">more_horiz</i>-->
+					</div>
+					<div class="web-title" style="margin-left: 5px;">
+						<span @tap="pageIndex = item.id" v-for="item in pageList" v-text="item.name" :class="item.id == pageIndex ? 'active' : ''" style="font-size: 30px;color:#101010;"></span>
+						<p class="statasIcon" v-text="leave.filterTypeText"></p>
+					</div>
+					<div class="search-input-box flex flex-y-center" style="box-shadow:1px 0px 9px #e4e2e2;height: 45px;">
+						<i class="material-icons icon-greey" style="margin-left: 10px;font-size: 18px;">search</i>
+						<form class="flex-1 flex flex-y-center" action="#" onsubmit="return false;">
+							<input v-model="searchText" id="search-input" @keyup.13="search" type="search" class="mui-input-clear" placeholder="搜索" @focus="setMenu(1)" @blur="setMenu(2)">
+							<i @tap="searchText = ''" v-show="searchText != ''" class="material-icons icon-greey" style="font-size: 20px;margin-right: 0.3rem;">cancel</i>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll" >
+					<div>
+						<!--数据列表-->
+						<div class="mui-table-view mui-table-view-chevron" style="margin-top: 2.5rem;padding: 0.3rem 0.5rem;">
+							<div v-if="pageIndex == 1">
+								<div v-for="item in leave.list" class="leave-box flex flex-y-top just-center" @tap="showDetails(item)" >
+									
+									<div v-text="getTypeText(item)" :type="item.type" class="mui-badge mui-badge-primary flex flex-y-center flex-x-center"></div>
+									<div class="" style="border-bottom: 1px solid #F3F5F8;padding-bottom: 10px;">
+										<div class="mg-btm-10 flex just-center flex-y-center" style="width: 5.4rem;">
+											<p v-text="getApplyName(item)" style="font-size: 17px;color: #101010;padding-top: 5px;margin-right: 20px;"></p>
+											<div class="textRight">
+												<p class="" v-text="getClassgrade(item)" style="color: #8B8B8B;"></p>
+											</div>
+
+										</div>
+										<div class="flex just-center flex-y-center mg-btm-10">
+											<p v-text="getYmd(item.s_time) + '—' + getYmd(item.e_time)" class="font-size-mid color-gray" ></p>
+										</div>			
+											<p v-text="getStateText(item).text" :style="{color:getStateText(item).color}"></p>										
+									</div>					
+								</div>
+							</div>
+							<div v-if="pageIndex == 2">
+								<div v-for="item in punch.list" class="leave-box flex flex-y-center ">
+									<div class="flex-1 flex flex-y-center">
+										<div v-text="item.behavior == 1 ? '进校' : item.behavior == 2 ? '出校' : '未知'" :type="item.type" class="mui-badge mui-badge-primary flex flex-y-center flex-x-center"></div>
+										<div class="mg-l-20" style="width: 5.4rem;">
+											<div class="mg-btm-10 flex just-center flex-y-center">
+												<p v-text="item.student_name" style="font-size: 17px;color: #444444;padding-top: 5px;margin-right: 10px;"></p>
+												<div class="textRight">
+												     <p v-text="item.classgrade_name" style="color: #8B8B8B;"></p>
+												</div>
+											</div>
+											<div class="flex just-center flex-y-center">
+												<p v-text="getYmd(item.time)" class="font-size-mid color-gray"></p>
+												<div class="">
+										              <p v-text="getTypeText(item)"></p>
+									            </div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						    <p class="NoData" v-if="leave.list.length==0" v-text="NoData"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/leave.js"></script>
+		<script type="text/javascript">
+			var stuentPage = function() {
+				var _m = {};
+				var self = _m;
+				var main = plus.webview.currentWebview();
+				var menu;
+				var mask;
+				var showMenu = false;
+				self.showCelan = function() {
+					console.log(document.getElementById("shaixuan"));
+
+					document.getElementById("shaixuan").addEventListener("tap", function() {
+						self.openMenu();
+					});
+				};
+				self.closeMenu = function() {
+					//窗体移动
+					self._closeMenu();
+					//关闭遮罩
+					mask.close();
+				};
+				self._closeMenu = function() {
+					if(showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "fixed";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "44px";
+						}
+						main.setStyle({
+							left: '0',
+							transition: {
+								duration: 150
+							}
+						});
+						//menu页面同时移动
+						menu.setStyle({
+							left: '100%',
+							transition: {
+								duration: 150
+							}
+						});
+						//等窗体动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+						showMenu = false;
+					}
+				};
+				self.openMenu = function() {
+					if(!showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "static";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "0px";
+						}
+
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						//显示完毕后，根据不同动画效果移动窗体；
+						menu.show('none', 0, function() {
+							main.setStyle({
+								left: '-70%',
+								transition: {
+									duration: 150
+								}
+							});
+							menu.setStyle({
+								left: '30%',
+								transition: {
+									duration: 150
+								}
+							});
+						});
+						//显示主窗体遮罩
+						mask.show();
+						showMenu = true;
+					}
+				}
+				self.getCelanWebview = function() {
+					setTimeout(function() {
+						menu = mui.preload({
+							id: 'leave-offcanvas-drag-left-plus-menu.html',
+							url: 'offcanvas-drag-left-plus-menu.html',
+							styles: {
+								left: "30%",
+								width: '70%',
+								zindex: 9997
+							}
+						});
+					}, 300);
+				};
+				self.meuiSet = function() {
+					//重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+					mui.menu = function() {
+						if(showMenu) {
+							self.closeMenu();
+						} else {
+							self.openMenu();
+						}
+					}
+				};
+				self.watchMenu = function() {
+					window.addEventListener("filter", function(event) {
+						var opt = JSON.parse(event.detail.value);
+						var seleType = opt.seleType;
+						console.log(seleType);
+						if(seleType == 1) {
+							if(opt.type == null){vm.leave.filterType = null}else{vm.leave.filterTypeText=opt.typeText} ;
+							if(opt.state == null) vm.leave.filterState = null;
+							vm.getLeaveList({
+								type: opt.type,
+								state: opt.state
+							})
+						}
+						if(seleType == 2) {
+							if(opt.type == null) vm.punch.filterType = null;
+							if(opt.state == null) vm.punch.filterState = null;
+							vm.getPunchList({
+								type: opt.type,
+								state: opt.state
+							})
+						}
+						self.closeMenu();
+					});
+				};
+				self.init = function() {
+					mask = mui.createMask(self._closeMenu);
+					self.getCelanWebview();
+					self.showCelan();
+					self.meuiSet();
+					self.watchMenu();
+				};
+				return _m;
+			}
+
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var vm = new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					searchText: '',
+					pageIndex: 1,
+					pageList: [{
+						name: '请假',
+						id: 1
+					}],
+					leave: {
+						list: [],
+						page: 0,
+						count: 0,
+						filterType: '',
+						filterState: '',
+						filterTypeText:'全部'
+					},
+					punch: {
+						list: [],
+						page: 0,
+						count: 0,
+						filterType: '',
+						behavior: '',
+					}
+				},
+				watch: {
+					pageIndex: function() {
+						var cehua = plus.webview.getWebviewById('leave-offcanvas-drag-left-plus-menu.html');
+						mui.fire(cehua, 'seleTypeEdit', {
+							seleType: this.pageIndex
+						});
+						//mui('.mui-scroll-wrapper').scroll().scrollTo(0, 0); //100毫秒滚动到顶
+						mui('#refreshContainer').pullRefresh().refresh(true);
+						if(this.pageIndex == 2 && this.punch.list.length == 0) {
+							this.getPunchList();
+						}
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+					mui.init({
+						pullRefresh: {
+							container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+							up: {
+								height: 50, //可选.默认50.触发上拉加载拖动距离
+								contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+								contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+								callback: this.pullUpRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							},
+							down: {
+								style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+								color: '#2196f3', //可选，默认“#2BD009” 下拉刷新控件颜色
+								height: '50px', //可选,默认50px.下拉刷新控件的高度,
+								range: '90px', //可选 默认100px,控件可下拉拖拽的范围
+								offset: '160px', //可选 默认0px,下拉刷新控件的起始位置
+								auto: false, //可选,默认false.首次加载自动上拉刷新一次
+								callback:this.pullDownRefresh									
+								//必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							}
+						}
+					});
+					 document.querySelector('body').addEventListener('touchstart', function(e) {
+                               if(e.target.className != 'input') {
+                                    document.getElementById('search-input').blur();
+                                 }
+                         });
+				},
+				methods: {
+					//获取班级
+					getClassgrade: function(list) {
+						if(list.apply_accounts.length > 0) {
+							return list.apply_accounts[0].accountData.identitysData[6].classgrades[0].name
+						}
+					},
+					//转化时间
+					getYmd: function(time) {
+						var date = new Date(parseInt(time));
+						return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate()) + ' ' + buqi(date.getHours()) + ':' + buqi(date.getMinutes());
+
+						//						return date.getFullYear() + '-' + buqi((date.getMonth() + 1)) + '-' + buqi(date.getDate());
+					},
+					//搜索
+					search: function() {
+						document.getElementById('search-input').blur();
+						plus.nativeUI.showWaiting( "加载中..." )
+						this.getLeaveList({
+							keyword: this.searchText
+						})
+					},
+					//填充请假人
+					getApplyName: function(list) {
+						if(list.apply_accounts.length > 1){
+							if(this.searchText){
+								 for(var i=0;i<list.apply_accounts.length;i++){
+								 	if(list.apply_accounts[i].accountData.rname.indexOf(this.searchText)!=-1){
+								 		 return  list.apply_accounts[i].accountData.rname+'等' + list.apply_accounts.length + '人';
+								 	}
+								 }
+								
+							}else{
+								 return list.apply_accounts[0].accountData.rname + '等' + list.apply_accounts.length + '人';
+							}
+							
+						}
+
+						return(list.apply_accounts.map(function(item) {
+							return item.accountData.rname;
+						})).join();
+					},
+					//获取请假列表
+					getLeaveList: function(opt) {
+						var parmas = {};
+						if(opt) {
+							if(opt.type) this.leave.filterType = opt.type;
+							if(opt.state) this.leave.filterState = opt.state;
+							this.leave.list = [];
+							this.leave.page = 0;
+							//							mui('.mui-scroll-wrapper').scroll().scrollTo(0, 0); //100毫秒滚动到顶
+							mui('#refreshContainer').pullRefresh().refresh(true);
+						}
+
+						if(this.leave.filterType) parmas.type = this.leave.filterType;
+						if(this.leave.filterState) parmas.state = this.leave.filterState;
+						if(this.searchText != null && this.searchText != '') parmas.keyword = this.searchText;
+						//最后判断一次如果page=0;数据必须清空
+						if(this.leave.page==0){this.leave.list = [];}
+						parmas.page = this.leave.page;
+						var that = this;
+						getLeaveList({
+							data: parmas,
+							success: function(data) {
+								if(data.data.list.length==0&&that.leave.list.length==0){
+									that.NoData='暂无';
+									 mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								}else{
+									that.NoData='';
+								  for(var i = 0; i < data.data.list.length; i++) {
+									that.leave.list.push(data.data.list[i]);
+								   }
+								   that.leave.count = data.data.count;
+								   that.leave.page += 1;
+								   if(that.leave.count == that.leave.list.length) {
+									    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+								    } else {
+									     mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+								    }	
+								}	
+							},
+							error: function(data) {
+								that.NoData='暂无'
+								mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+								mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+							}
+						})
+					},
+					//获取考勤列表
+					getPunchList: function(opt) {
+						var parmas = {};
+						if(opt) {
+							if(opt.type) this.punch.filterType = opt.type;
+							if(opt.state) this.punch.behavior = opt.state;
+							this.punch.list = [];
+							this.punch.page = 0;
+							//							mui('.mui-scroll-wrapper').scroll().scrollTo(0, 0); //100毫秒滚动到顶
+							mui('#refreshContainer').pullRefresh().refresh(true);
+						}
+
+						if(this.punch.filterType) parmas.type = this.punch.filterType;
+						if(this.punch.behavior) parmas.behavior = this.punch.behavior;
+						if(this.searchText != null && this.searchText != '') parmas.keyword = this.searchText;
+						parmas.page = this.punch.page;
+						var that = this;
+						getPunchList({
+							data: parmas,
+							success: function(data) {
+								if(data.data.list.length==0){
+									that.NoData='暂无'
+								}else{
+									that.NoData='';
+								}
+								for(var i = 0; i < data.data.list.length; i++) {
+									that.punch.list.push(data.data.list[i]);
+								}
+								that.punch.count = data.data.count;
+								that.punch.page += 1;
+								if(that.punch.count == that.punch.list.length) {
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+								} else {
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+								}
+							}
+						})
+					},
+					//查看详情
+					showDetails: function(item) {
+						plus.storage.setItem('leaveDetail', JSON.stringify(item));
+						mui.openWindow({
+							url: 'check.html',
+							id: 'leaveCheck'
+						})
+					},
+					//跳转页面
+					showView: function(path) {
+						mui.openWindow({
+							url: path,
+							id: path
+						})
+					},
+					//上拉加载
+					pullUpRefresh: function() {
+						var that = this;
+						mui('#refreshContainer').pullRefresh().enablePullupToRefresh(false);
+						if(this.pageIndex == 1) this.getLeaveList();
+						if(this.pageIndex == 2) this.getPunchList();
+					},
+					//下拉刷新
+					pullDownRefresh:function(){
+						var parmas={};
+						var that = this;
+						if(this.pageIndex == 1){//刷新请假列表
+							if(this.leave.filterType) parmas.type = this.leave.filterType;
+						    if(this.leave.filterState) parmas.state = this.leave.filterState;
+						    if(this.searchText != null && this.searchText != '') parmas.keyword = this.searchText;
+						    parmas.page = 0;
+						    var that = this;
+						    plus.nativeUI.showWaiting( "加载中..." )
+						    getLeaveList({
+							     data: parmas,
+							  success: function(data) {
+							  	
+							  	mui('#refreshContainer').pullRefresh().endPulldown();
+							  	that.leave.list = [];
+							  	if(data.data.list.length==0){
+									that.NoData='暂无'
+									mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								}else{
+									that.NoData=''; 
+									that.leave.page = 0;
+							      mui('#refreshContainer').pullRefresh().refresh(true);						         
+								  for(var i = 0; i < data.data.list.length; i++) {
+									  that.leave.list.push(data.data.list[i]);
+								   }
+								      that.leave.page += 1; 
+								   }     
+							    },
+							       	error: function(data) {
+								      that.NoData='暂无'
+								       mui('#refreshContainer').pullRefresh().endPulldown();
+							         }
+						       })
+						};
+						if(this.pageIndex == 2){//刷新考勤列表
+							if(this.punch.filterType) parmas.type = this.punch.filterType;
+						    if(this.punch.behavior) parmas.behavior = this.punch.behavior;
+						    if(this.searchText != null && this.searchText != '') parmas.keyword = this.searchText;
+						     this.punch.page = 0;
+						     parmas.page = this.punch.page;
+						     var that = this;
+						      plus.nativeUI.showWaiting( "加载中..." )
+						    getPunchList({
+							   data: parmas,
+							   success: function(data) {
+							   	if(data.data.list.length==0){
+									that.NoData='暂无'
+								}else{
+									that.NoData='';
+								}
+							   	  that.punch.list = [];
+							      mui('#refreshContainer').pullRefresh().refresh(true);
+						          mui('#refreshContainer').pullRefresh().endPulldown();
+								for(var i = 0; i < data.data.list.length; i++) {
+									that.punch.list.push(data.data.list[i]);
+								}
+								that.punch.count = data.data.count;
+								that.punch.page += 1;
+							 }
+						   })
+						} 						
+					},
+					//考勤刷选
+					getTypeText: function(item) {
+						switch(item.type) {
+							case 0:
+								return '其他';
+								break;
+							case 1:
+								return '事假';
+								break;
+							case 2:
+								return '病假';
+								break;
+							case 3:
+								return '活动';
+								break;
+							case 13:
+								return '正常';
+								break;
+							case 12:
+								return '请假 ';
+								break;
+							case 11:
+								return '早退';
+								break;
+						}
+					},
+					//获取状态
+					getStateText: function(item) {
+						switch(item.last_state) {
+							case 0:
+								return {
+									text: '待审批',
+									color: '#2196F3'
+								}
+								break;
+							case 1:
+								return {
+									text: '已审批',
+									color: '#acacac'
+								}
+								break;
+							case -1:
+								return {
+									text: '驳回',
+									color: 'rgb(252,64,68)'
+								}
+						}
+					},
+					//刷新
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							stuentPage().init();
+							that.role = getUserRole();
+							that.getLeaveList();
+						})
+					}
+				}
+			})
+			//请假成功刷新页面
+			window.addEventListener('loadpage', function() {
+				vm.getLeaveList({});
+			})
+			//切换tab刷新页面
+			window.addEventListener('tabPageShow', function() {
+				document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+                 
+					vm.pullDownRefresh();	
+			})
+			window.addEventListener('loadpage', function() {
+				console.log('打分成功,刷新页面');
+				location.reload();
+			})
+		</script>
+	</body>
+
+</html>

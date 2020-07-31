@@ -1,0 +1,891 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		#app {
+			padding: 10px 0.35rem 0;
+		}
+		
+		.mui-table-view .mui-media-body p {
+			line-height: 0.5rem;
+			color: #101010!important;
+			font-size: 0.28rem;
+		}
+		
+		.mui-content .head {
+			min-height: 90px;
+			padding: 30px 0 30px;
+			text-align: left;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		.mui-content .head .headImg {
+			position: absolute;
+			right: 0;
+			top: 1000px;
+		}
+		
+		.mui-content .head img {
+			width: 60px;
+		}
+		
+		.mui-content div.type>p {
+			font-size: 17px;
+			color: #101010;
+			margin-bottom: 0.35rem;
+		}
+		
+		.mui-content div.type {
+			margin-bottom: 0.5rem;
+		}
+		
+		.mui-content div.type>span {
+			font-size: 14px;
+		}
+		
+		.mui-content div.type p.mui-ellipsis {
+			line-height: 0.5rem;
+			color: #101010;
+			font-size: 0.28rem;
+		}
+		
+		.mui-badge {
+			/*height: 0.4rem;
+			line-height: 0.4rem;*/
+			/*font-size: 12px;*/
+			/*padding: 0 0.3rem;*/
+			/*box-shadow: 2px 2px 7px -3px #2196f3;*/
+			margin-right: 0.35rem;
+			display: inline-block;
+			font-size: 14px;
+			/*border-radius: 100px!important;*/
+		}
+		
+		#app .mui-badge.userRoleNow {
+			background: transparent;
+			border-radius: 0;
+			color: #8f8d94;
+		}
+		
+		.type .mui-table-view-cell>a:not(.mui-btn) {
+			margin: 0 0;
+		}
+		
+		.weidu-box {
+			background: red;
+			border-radius: 50%;
+			width: .48rem;
+			height: .48rem;
+			color: #FFFFFF;
+			text-align: center;
+			line-height: .48rem;
+		}
+		
+		.Listwrap {
+			position: relative;
+			padding-left: 0.8rem;
+			color: #101010;
+		}
+		
+		.iconset {
+			color: #2196F3;
+			font-size: 19px!important;
+			margin-right: 15px;
+			vertical-align: top;
+			position: absolute;
+			left: 0;
+			top: -0.015rem;
+		}
+		
+		.mui-table-view-cell {
+			margin-bottom: 20px;
+		}
+		
+		#grad0 {
+			height: 160px;
+			background: -webkit-linear-gradient(left, #de608a, #f9b797);
+			/* Safari 5.1 - 6.0 */
+			background: -o-linear-gradient(right, #de608a, #f9b797);
+			/* Opera 11.1 - 12.0 */
+			background: -moz-linear-gradient(right, #de608a, #f9b797);
+			/* Firefox 3.6 - 15 */
+			background: linear-gradient(to right, #de608a, #f9b797);
+			/* 标准的语法（必须放在最后） */
+			box-shadow: 3px 6px 15px rgba(166, 166, 166, 0.7);
+		}
+		
+		#grad1 {
+			height: 160px;
+			background-image: linear-gradient( -45deg, #FF96F9 10%, #C32BAC 100%);
+			box-shadow: 3px 6px 15px rgba(166, 166, 166, 0.7);
+		}
+		
+		#grad2 {
+			height: 160px;
+			background-image: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
+			box-shadow: 3px 6px 15px rgba(166, 166, 166, 0.7);
+		}
+		
+		#grad3 {
+			height: 160px;
+			background-image: linear-gradient( -45deg, #79F1A4 10%, #0E5CAD 100%);
+			box-shadow: 3px 6px 15px rgba(166, 166, 166, 0.7);
+		}
+		
+		#grad4 {
+			height: 160px;
+			background: -webkit-linear-gradient(left, #f0690d, #ffb501);
+			/* Safari 5.1 - 6.0 */
+			background: -o-linear-gradient(right, #f0690d, #ffb501);
+			/* Opera 11.1 - 12.0 */
+			background: -moz-linear-gradient(right, #f0690d, #ffb501);
+			/* Firefox 3.6 - 15 */
+			background: linear-gradient(to right, #f0690d, #ffb501);
+			/* 标准的语法（必须放在最后） */
+			/*box-shadow: 1px 1px 5px #ffb501;*/
+			box-shadow: 3px 6px 15px rgba(166, 166, 166, 0.7);
+		}
+		
+		ul.mui-table-view li {
+			margin: 0;
+			margin-bottom: 20px;
+			border-radius: 5px;
+			padding: 0.3rem 0.4rem;
+			padding-right: 0;
+			box-sizing: border-box;
+			color: #FFFFFF;
+		}
+		
+		ul.mui-table-view li dl {
+			display: inline-block;
+			margin: 0;
+			margin-bottom: 18px;
+			margin-right: 30px;
+		}
+		
+		ul.mui-table-view li dt {
+			font-size: 14px;
+			margin: 0;
+			margin-bottom: 10px;
+		}
+		
+		ul.mui-table-view li dd {
+			font-size: 20px;
+			margin: 0;
+		}
+		
+		.Echars_pic {
+			margin-top: 0.5rem;
+		}
+		
+		li {
+			list-style: none;
+		}
+		
+		.Echars_pic p.title {
+			font-size: 16px;
+			color: #101010;
+			text-align: center;
+			font-weight: bold;
+			list-style: none;
+		}
+		
+		.Total {
+			line-height: 0.6rem;
+			margin: 0;
+			padding: 0.5rem 0;
+		}
+		
+		.panel {
+			position: relative;
+		}
+		
+		.panel i.material-icons {
+			position: absolute;
+			right: 0.4rem;
+			top: 0;
+			font-size: 60px!important;
+			opacity: 0.2;
+		}
+	</style>
+
+	<body>
+		<div id="app" class="mui-content">
+			<div class="mui-content-padded" style="margin-left: 0;margin-bottom: 0;margin-right: 0;">
+				<div class="head tc" style="min-height: 60px;">
+					<div style="float:left;">
+						<h3 v-text="userInfo.rname+'老师'" style="color: #000000;font-size: 28px;line-height: 28px;" v-if="userInfo.rname"></h3>
+						<h3 style="color: #000000;font-size: 28px;" v-else v-text="username"></h3>
+					</div>
+					<span class="headImg" style="border-radius:50%;overflow: hidden ;height: 60px;top:18px;width: 60px;">
+						  <img id="head-img" :src="window.imgpath + userPhoto" alt="" />
+					</span>
+
+				</div>
+
+			</div>
+			<ul class="mui-table-view">
+				<li id="grad0" @tap="showView('../duty/TodayDuty.html')">
+					<section class="panel">
+						<div class="value">
+							<dl>
+								<dt class="semester" v-html="semesterName"></dt>
+								<dd class="week" v-text="weekName"></dd>
+							</dl>
+						</div>
+						<div class="value">
+							<dl style="margin-right: 3px;">
+								<dt class="date" v-text="NowDate"></dt>
+								<dd v-text="studentInfoCount"></dd>
+							</dl>
+							<dl>
+								<dt>今日值班</dt>
+								<dd v-text="dutyState">否</dd>
+							</dl>
+						</div>
+						<i class="material-icons">event_available</i>
+					</section>
+				</li>
+				<li id="grad1" @tap="showView('../punch/index.html')">
+					<section class="panel">
+						<div class="value">
+							<dl>
+								<dt>今日到校</dt>
+								<dd v-text="punchInfoCount"></dd>
+							</dl>
+						</div>
+						<div class="value">
+							<dl>
+								<dt>迟到</dt>
+								<dd v-text="punchInfoLate"></dd>
+							</dl>
+							<dl>
+								<dt>异常</dt>
+								<dd v-text="punchInfoException"></dd>
+							</dl>
+							
+						</div>
+						<i class="material-icons">exit_to_app</i>
+					</section>
+				</li>
+				<li id="grad2" @tap="showView('../students/deleteScoreHistory.html')">
+					<section class="panel">
+						<div class="value">
+							<dl>
+								<dt>今日学生核心素养</dt>
+								<dd v-text="performanceInfoCout"></dd>
+							</dl>
+						</div>
+						<div class="value">
+							<dl>
+								<dt>加分</dt>
+								<dd v-text="performanceInfoACount"></dd>
+							</dl>
+							<dl>
+								<dt>减分</dt>
+								<dd v-text="performanceInfoMCount"></dd>
+							</dl>
+						</div>
+						<i class="material-icons">favorite_border</i>
+					</section>
+				</li>
+				<li id="grad3" @tap="showView('../leave/index.html')">
+					<section class="panel">
+						<div class="value">
+							<dl>
+								<dt>今日请假</dt>
+								<dd v-text="leaveInfo_otherCount"></dd>
+							</dl>
+						</div>
+						<div class="value">
+							<dl>
+								<dt>病假</dt>
+								<dd v-text="leaveInfo_illCount"></dd>
+							</dl>
+							<dl>
+								<dt>事假</dt>
+								<dd v-text="leaveInfo_matterCount"></dd>
+							</dl>
+							<dl>
+								<dt>活动</dt>
+								<dd v-text="leaveInfo_activityCount"></dd>
+							</dl>
+						</div>
+						<i class="material-icons">content_copy</i>
+					</section>
+				</li>
+				<li id="grad4" @tap="showView('../classes/deleteScoreHistoryForclasses.html')">
+					<section class="panel">
+						<div class="value">
+							<dl>
+								<dt>今日班级评比</dt>
+								<dd v-text="performanceClassgradeInfo_count"></dd>
+							</dl>
+						</div>
+						<div class="value">
+							
+							<dl v-for="(item,key) in infos">
+								<dt v-for="(items,keys) in item"v-text="keys"></dt>
+								<dd v-for="items in item" v-text="items+'条'"></dd>
+							</dl>
+							<!--<dl>
+								<dt>文明班级</dt>
+								<dd v-text="">0条</dd>
+							</dl>-->
+						</div>
+						<i class="material-icons">people_outline</i>
+					</section>
+				</li>
+			</ul>
+			<div class="Echars_pic" style="padding-bottom:0.5rem ;">
+				<h3 style="padding-top: 0.2rem;margin-bottom: 0.5rem;">核心素养评价总览</h3>
+				<div class="mui-slider" style="box-shadow: 1px 2px 18px rgba(170,170,170,0.48);padding-bottom: 50px;margin-bottom: 0.5rem;border-radius: 5px;">
+					<div class="mui-slider-group">
+						<!--第一个内容区容器-->
+						<div class="mui-slider-item" id="pproject_Add" style="height: 6rem;">
+							<!-- 具体内容 -->
+						</div>
+						<!--第二个内容区-->
+						<div class="mui-slider-item" id="pproject_reduce" style="height: 6rem;">
+							<!-- 具体内容 -->
+						</div>
+					</div>
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator mui-active"></div>
+						<div class="mui-indicator"></div>
+					</div>
+				</div>
+				<div style="box-shadow: 1px 2px 18px rgba(170,170,170,0.48);height:6.8rem;border-radius: 5px;" id="zhu">
+
+				</div>
+			</div>
+		</div>
+		<script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script type="text/javascript" src="../../js/user/role.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/user.js"></script>
+		<script src="../../js/echarts.min.js"></script>
+		<script src="../../js/api/nowState.js"></script>
+		<script src="../../js/api/duty.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					username: '',
+					role: '',
+					userInfo: {},
+					userPhoto: '',
+					posts: [],
+					studentInfoCount: '0人', //学生总数
+					punchInfoException: '0人', //考勤异常
+					punchInfoLate: '0人', //考勤迟到
+					punchInfoCount: '0人', //到校人数
+					performanceInfoACount: '0条', //核心素养今日加分
+					performanceInfoMCount: '0条', //核心素养几日减分
+					performanceInfoCout: '0条', //核心素养今日打分总分
+					leaveInfo_activityCount: '0人', //活动//请假
+					leaveInfo_illCount: '0人', //病假
+					leaveInfo_matterCount: '0人', //请假人数
+					leaveInfo_otherCount: '0人', //事假
+					performanceClassgradeInfo_count: '0条', //班级打分
+					inResidenceCount: '', //今日住校
+					inCompetitionCount: '', //竞赛
+					inStopCount: '', //停住
+					semesterName: '&nbsp;',
+					weekName: '',
+					NowDate: '',
+					dutyState: '否',
+					 infos:null
+				},
+				mixins: [userRole],
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					userInit: function() {
+						this.role = JSON.parse(plus.storage.getItem('indexRole'));
+						this.userInfo = JSON.parse(plus.storage.getItem('userinfo'));
+						this.username = plus.storage.getItem('username');
+						this.userPhoto = this.userInfo.photopath;
+						this.chooseInformation = "person-information.html"
+					},
+					showView: function(path) {
+						mui.openWindow({
+							url: path,
+							id: path
+						})
+					},
+					getRole: function(item) {
+						var role = [];
+						for(var i in item) {
+							role.push({
+								name: item[i].name,
+								key: item[i].key
+							});
+						}
+						return {
+							role: JSON.stringify(role),
+							indexrole: JSON.stringify(role[0])
+						}
+					},
+					//通过当前日期获取学期和值班情况
+					ItemNowTime: function() {
+						var that = this;
+						var params = {};
+						var date = new Date();
+						var dateS = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+						params.time = new Date(dateS + ' 00:00:00').getTime();
+						this.NowDate = dateS + '学生总数（全校）';
+						ItemNowTime({
+							data: params,
+							success: function(result) {
+								var data = result.data;
+								if(data) {
+									that.semesterName = data.semester.name;
+									that.weekName = data.week.name;
+								} else {
+									new fui({
+										text: '今天是休息日',
+										bg: '#FF4747'
+									})
+								}
+
+							},
+							error: function() {
+                                  that.weekName = '休息日';
+							}
+						})
+						plus.nativeUI.showWaiting("加载中...")
+						getDutyList({
+							data: params,
+							success: function(data) {
+								that.dutyList = data.data;
+								if(that.dutyList.length == 0) {
+									that.dutyState = "否";
+								} else {
+									that.dutyList.forEach(function(item) {
+										if(item.teacher.id == plus.storage.getItem('faid')) {
+											that.dutyState = "是";
+										}
+									})
+								}
+							},
+							error: function() {
+
+							}
+						})
+					},
+					//获取首页当日学校情况
+					//判断班级和专业部权限下
+					getShowforPower: function(params) {
+						const that = this;
+						that.role = getUserRole();
+						const arr = [];
+						if(plus.storage.getItem('userinfo')) {
+							var positionId = JSON.parse(plus.storage.getItem('userinfo')).identitysData;
+
+						}
+						if(that.role == 4) { //班主任或副班主任
+							var classgrades = positionId['4'].classgrades
+							if(classgrades.length == 0) {
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_id = arr.join('-');
+							}
+						}
+						if(that.role == 8) { //专业部
+							var majorGroup = positionId['8'].majorGroup
+							if(!majorGroup) {
+								new fui({
+									text: '专业部权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								params.major_group_id = majorGroup.id;
+							}
+						}
+						if(that.role == 12) { //班主任或副班主任
+							var classgrades = positionId['12'].classgrades
+							if(classgrades.length == 0) {
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_id = arr.join('-');
+							}
+						}
+						return params;
+
+					},
+
+					//获取首页数据
+					getData: function(data) {
+						var that = this;
+						var params = {};
+						this.getShowforPower(params);
+						//填充当页面数据
+						getNowState({
+							data: params,
+							success: function(result) {
+								var data = result.data;
+								that.studentInfoCount = data.studentInfo.count + '人'//学生总数
+									that.punchInfoException = data.punchInfo.exceptionCount + '人' //考勤异常
+									that.punchInfoLate = data.punchInfo.lateCount + '人' //考勤迟到
+									that.punchInfoCount = data.punchInfo.punchCount + '人'//到校人数
+									that.performanceInfoACount = data.performanceInfo.aCount + '条' //核心素养今日加分
+									that.performanceInfoMCount = data.performanceInfo.mCount + '条' //核心素养几日减分
+									that.performanceInfoCout = data.performanceInfo.cout + '条' //核心素养今日打分总分
+									that.leaveInfo_activityCount = data.leaveInfo.activityCount + '人' //活动//请假
+									that.leaveInfo_illCount = data.leaveInfo.illCount + '人' //病假
+									that.leaveInfo_matterCount = data.leaveInfo.matterCount + '人' //事假人数
+									that.leaveInfo_otherCount = data.leaveInfo.otherCount + data.leaveInfo.matterCount + data.leaveInfo.illCount + data.leaveInfo.activityCount + '人' //请假人数
+									//班级打分
+									that.performanceClassgradeInfo_count = data.performanceClassgradeInfo.count + '条'
+									//今日住校
+									that.inResidenceCount = data.inResidenceInfo.inResidenceCount + '人' //今日住校
+									that.inCompetitionCount = data.inResidenceInfo.inCompetitionCount + '人' //竞赛
+									that.inStopCount = data.inResidenceInfo.inStopCount + '人' //停住
+									if(data.performanceClassgradeInfo.infos&&data.performanceClassgradeInfo.infos.length>0){
+										that.infos = data.performanceClassgradeInfo.infos
+									}
+									
+									that.zhu(data.weekInfo.reverse())
+							}
+							
+						})
+					},
+					zhu: function(arr) {
+						var timeArr = [];
+						var aArr = [];
+						var bArr = [];
+						    if(arr&&arr.length>0){
+						    	weekInfo = arr;
+							   for(var i = 0; i < weekInfo.length; i++) {
+								  timeArr.push(this.getdate(weekInfo[i].time));
+								  aArr.push(weekInfo[i].a);
+								  bArr.push(weekInfo[i].b);
+							    }
+						    }else{
+						    	return;
+						    }
+						var table_echarts = echarts.init(document.getElementById('zhu'));
+						option = {
+							title: {
+								text: '每日打分',
+								subtext: '',
+								x: 'center',
+								top: '10',
+								left: '15',
+								textStyle: {
+									//文字颜色
+									color: '#000',
+									//字体风格,'normal','italic','oblique'
+									fontStyle: 'normal',
+									fontWeight: '800',
+									//字体大小
+									fontSize: 18
+								}
+							},
+							tooltip: {
+								trigger: 'axis'
+							},
+							color: ['#2196f3', '#ff4747'],
+							legend: {
+								data: ['加分', '减分'],
+								x: 'right',
+								top: '10'
+							},
+							calculable: true,
+							xAxis: [{
+									type: 'category',
+									data: timeArr
+								}
+
+							],
+							yAxis: [{
+								type: 'value'
+							}],
+							series: [{
+									name: '加分',
+									type: 'bar',
+									data: aArr,
+									
+								},
+								{
+									name: '减分',
+									type: 'bar',
+									data: bArr
+								}
+							]
+						};
+
+						table_echarts.setOption(option);
+					},
+					getdate:function(time){
+						var date = new Date(parseInt(time));
+						return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate());
+					},
+					//初始化得分汇总
+					echarsInit: function(opt) {
+						var that = this;
+						var params = {};
+						if(opt) {
+							if(opt.majorGroup_id) {
+								params.majorGroup_id = opt.majorGroup_id
+							};
+							if(opt.grade) {
+								params.grade = opt.grade
+							};
+							if(opt.classgrade_id) {
+								params.classgrade_id = opt.classgrade_id
+							};
+						}
+						getPerformanceScale({
+							data: params,
+							success: function(result) {
+								var projects = []
+								projects = result.data.projects;
+								var add_Total = 0;
+								var reduce_Total = 0;
+								var arr_reduce = [{
+										value: 0,
+										name: '科学精神'
+									}, {
+										value: 0,
+										name: '学会学习'
+									},
+									{
+										value: 0,
+										name: '人文底蕴',
+									}, {
+										value: 0,
+										name: '实践创新'
+									},
+									{
+										value: 0,
+										name: '责任担当'
+									}, {
+										value: 0,
+										name: '健康生活'
+									}
+								];
+								var arr_add = [{
+										value: 0,
+										name: '科学精神'
+									}, {
+										value: 0,
+										name: '学会学习'
+									},
+									{
+										value: 0,
+										name: '人文底蕴'
+									}, {
+										value: 0,
+										name: '实践创新'
+									},
+									{
+										value: 0,
+										name: '责任担当'
+									}, {
+										value: 0,
+										name: '健康生活'
+									}
+								];
+
+								/*通过接口数据计算总数*/
+								projects.forEach(function(item) {
+									if(item['project_id'] != 0) {
+										add_Total += item.add_value
+										reduce_Total += item['subtract_value'];
+										that.fill_score(item, arr_reduce, arr_add, add_Total, reduce_Total);
+
+									}
+								})
+								that.$nextTick(function() {
+									const add = this.Piechart('加分汇总', 'pproject_Add', arr_add);
+									const reduce = this.Piechart('减分汇总', 'pproject_reduce', arr_reduce);
+								})
+								//								 $('.Total').empty();
+								//                               that.fill_Message(arr_add,arr_reduce,add_Total,reduce_Total);
+							}
+						})
+					}, //填充数据
+					fill_score: function(project, arr_reduce, arr_add) {
+						switch(project.project_name) {
+							case '科学精神':
+								arr_add[0].value = Number(project.add_value)
+								arr_reduce[0].value = Number(project.subtract_value)
+								break;
+							case '学会学习':
+								arr_add[1].value = Number(project.add_value)
+								arr_reduce[1].value = Number(project.subtract_value)
+								break;
+							case '人文底蕴':
+								arr_add[2].value = Number(project.add_value)
+								arr_reduce[2].value = Number(project.subtract_value)
+								break;
+							case '实践创新':
+								arr_add[3].value = Number(project.add_value)
+								arr_reduce[3].value = Number(project.subtract_value)
+								break;
+							case '责任担当':
+								arr_add[4].value = Number(project.add_value)
+								arr_reduce[4].value = Number(project.subtract_value)
+								break;
+							case '健康生活':
+								arr_add[5].value = Number(project.add_value)
+								arr_reduce[5].value = Number(project.subtract_value)
+								break;
+						}
+					},
+					//通过数据绘画饼图
+					Piechart: function(text, ids, arr) {
+						var table_echarts = echarts.init(document.getElementById(ids));
+						option = {
+							color: ['#37a2da', '#67e0e3', '#fff065', '#ff9f7f', '#e36fb5', '#eba53e'],
+							title: {
+								text: text,
+								subtext: '',
+								x: 'center',
+								top: '10',
+								left: '15',
+								textStyle: {
+									//文字颜色
+									color: '#000',
+									//字体风格,'normal','italic','oblique'
+									fontStyle: 'normal',
+									fontWeight: '800',
+									//字体大小
+									fontSize: 18
+								}
+							},
+							tooltip: {
+								trigger: 'item',
+								formatter: "{a} <br/>{b} : {c} ({d}%)"
+							},
+							series: [{
+								name: '核心素养',
+								type: 'pie',
+								radius: '60%',
+								center: ['50%', '60%'],
+								data: arr,
+								itemStyle: {
+									emphasis: {
+										shadowBlur: 10,
+										shadowOffsetX: 0,
+										shadowColor: 'rgba(0, 0, 0, 0.5)'
+									}
+								}
+
+							}]
+						};
+						table_echarts.setOption(option);
+					},
+					//填充得分明细
+					fill_Message: function(arr_add, arr_reduce, add_Total, reduce_Total) {
+						var colors = ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83'];
+						var dom = '';
+						var resuce_dom = '';
+						if(arr_add) {
+							for(var i = 0; i < arr_add.length; i++) {
+								if(add_Total) {
+									var num_X = arr_add[i].value * 100 / add_Total;
+									if(String(num_X).indexOf(".") > -1) {
+										var num = num_X.toFixed(2) + '%'
+									} else {
+										var num = num_X + '%'
+									}
+								} else {
+									var num = '0%'
+								}
+								dom += '<li style="color:' + colors[i] + '">' + arr_add[i].name + '：加' + arr_add[i].value + '分，占比' + num + '。</li>'
+							}
+							$('#pproject_Add_M').prepend(dom);
+						}
+						if(arr_reduce) {
+							for(var i = 0; i < arr_reduce.length; i++) {
+								if(reduce_Total) {
+									var num_X = arr_reduce[i].value * 100 / reduce_Total;
+									if(String(num_X).indexOf(".") > -1) {
+										var num = num_X.toFixed(2) + '%'
+									} else {
+										var num = num_X + '%'
+									}
+								} else {
+									var num = '0%'
+								}
+								resuce_dom += '<li style="color:' + colors[i] + '">' + arr_reduce[i].name + '：扣' + arr_reduce[i].value + '分，占比' + num + '。</li>'
+							}
+							$('#pproject_reduce_M').prepend(resuce_dom);
+						}
+
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.getData();
+							that.ItemNowTime();
+							that.userInit();
+							that.echarsInit();
+						})
+						mui.init({
+							preloadPages: [{
+									id: '../punch/index.html',
+									url: '../punch/index.html'
+								},
+								{
+									id: '../students/deleteScoreHistory.html',
+									url: '../students/deleteScoreHistory.html'
+								},
+								{
+									id: '../classes/deleteScoreHistoryForclasses.html',
+									url: '../classes/deleteScoreHistoryForclasses.html'
+								}
+							]
+						})
+					}
+				}
+			})
+			window.addEventListener('tabPageShow', function() {
+				document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+				vm.getData();
+				vm.ItemNowTime();
+				vm.userInit();
+				vm.echarsInit();
+				vm.zhu();
+			})
+		</script>
+	</body>
+
+</html>

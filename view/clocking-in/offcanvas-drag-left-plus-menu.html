@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			.mui-content {
+				padding-left: 10px;
+				padding-right: 30px;
+			}
+			
+			header.mui-bar {
+				display: none;
+			}
+			
+			.title {
+				padding-top: 20px;
+				padding-bottom: 30px;
+				font-size: 20px;
+				font-weight: bold;
+			}
+			
+			.from>div {
+				margin-bottom: 20px;
+			}
+			
+			.from>div>div {
+				border: 1px solid rgb(187, 187, 187);
+				border-radius: 8px;
+				padding: 6px 10px;
+			}
+			
+			.btn {
+				position: absolute;
+				bottom: 1.6rem;
+				right: 0.6rem;
+			}
+			
+			.btn button {
+				font-size: 16px;
+				border-radius: 100px;
+				padding: 4px 0.6rem;
+			}
+		</style>
+	</head>
+    
+	<body>
+		<div class="mui-content">
+			<div class="title">筛选</div>
+			<div class="from">
+				<div>
+					<p>请假原因</p>
+					<div id="showUserPicker" class="flex just-center">
+						<span id="userResult">病假</span>
+						<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+					</div>
+				</div>
+				<div>
+					<p>审批情况</p>
+					<div class="flex just-center">
+						<span>已审批</span>
+						<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+					</div>
+				</div>
+				<div>
+					<p>班级</p>
+					<div class="flex just-center">
+						<span>17电子信息1班</span>
+						<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+					</div>
+				</div>
+			</div>
+			<div class="btn">
+				<button type="button" class="mui-btn">重置</button>
+				<button type="button" class="mui-btn mui-btn-primary" id="filter">确定</button>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//关闭back、menu按键监听，这样侧滑主界面会自动获得back和memu的按键事件，仅在主界面处理按键逻辑即可；
+			mui.init({
+				keyEventBind: {
+					backbutton: false,
+					menubutton: false
+				}
+			});
+
+			mui.plusReady(function() {
+				var menuPage = (function() {
+					var main = null;
+					var _m = {};
+					var self = _m;
+					self.getWebviewOpener = function() {
+						main = plus.webview.currentWebview().opener();
+					};
+					self.closeMenu = function() {
+						mui.fire(main, "menu:swiperight");
+					};
+					self.addEvent = function() {
+						window.addEventListener("swiperight", self.closeMenu);
+					};
+					self.pickInit = function() {
+						var userPicker = new mui.PopPicker();
+						userPicker.setData(
+							[{
+								value: '1',
+								text: '病假'
+							}, {
+								value: '2',
+								text: '事假'
+							}]);
+						var showUserPickerButton = document.getElementById('showUserPicker');
+						var userResult = document.getElementById('userResult');
+						showUserPickerButton.addEventListener('tap', function(event) {
+							userPicker.show(function(items) {
+								userResult.innerText = items[0].text;
+								userResult.setAttribute('value',items[0].value);
+								//返回 false 可以阻止选择框的关闭
+								//return false;
+							});
+						}, false);
+					};
+					self.filter = function() {
+						document.getElementById('filter').addEventListener('tap',function(event) {
+							var value = document.getElementById('userResult').getAttribute('value');
+							mui.fire(main, "filter",{
+								value:value
+							});
+						});
+					};
+					self.init = function() {
+						self.pickInit();
+						self.addEvent();
+						self.getWebviewOpener();
+						self.filter();
+					};
+					self.init();
+				})();
+			})
+		</script>
+	</body>
+
+</html>

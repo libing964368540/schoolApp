@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body,
+		html,
+		.mui-content {
+			background: #ffffff;
+			/*margin-top: 0.96rem;*/
+			
+		}
+		
+		.mui-content .mui-input-group {
+		    padding: 0 0.3rem;
+		}
+		
+		.mui-content .mui-input-row {
+			background: #fff;
+			padding:0.7rem 0;
+		}
+		.mui-content .mui-input-row input{
+			height: 30px;
+		}
+		input::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #c5c5c5!important;
+		}
+		
+		input::-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #c5c5c5!important;
+		}
+		
+		input::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #c5c5c5!important;
+		}
+		
+		input::-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #c5c5c5!important;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		</header>
+		
+		<div class="mui-content" id="app">
+			
+				<div class="mui-content-padded">
+			      <div class="web-title" style="margin-left: 10px;margin-top: 25px;margin-bottom: 15px;">
+						<span class="active mg-r-10" style="font-size: 32px;color: #101010;">设置密码</span>
+					</div>
+				</div>
+			
+			<form class="mui-input-group" style="margin-bottom: 50px;">
+				<div class="mui-input-row">
+					<input type="password" v-model="lpwd"  placeholder="请输入原密码">
+				</div>
+				<div class="mui-input-row">
+					<input type="password" v-model="newpwd" placeholder="请输入6-12位的新密码">
+				</div>
+				<div class="mui-input-row">
+					<input type="password" v-model="newpwdTwo" placeholder="请确认密码">
+				</div>
+
+			</form>
+			
+			<div class="mui-content-padded"style="padding-left:0.2rem ;padding-right:0.3rem ;">
+				<button @tap="editPwd" type="button" class="mui-btn mui-btn-primary school_btn" style="margin-bottom: 0.2rem;">完成设置</button>
+				<p class="tc mg-btm-20" style="font-size: 12px;">提示：如忘记密码，请联系学校管理员重置。</p>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/login.js"></script>
+		<script src="../../js/lib/lib.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			var vm = new Vue({
+				el: '#app',
+				data: {
+					lpwd: '',
+					newpwd: '',
+					newpwdTwo: ''
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					editPwd: function() {
+						if(this.lpwd == '') {
+							new fui({
+								text: '密码不能为空'
+							});
+							return;
+						}
+						if(this.newpwd == '') {
+							new fui({
+								text: '新密码不能为空'
+							});
+							return;
+						}
+						if(this.newpwdTwo == '') {
+							new fui({
+								text: '密码确认不能为空'
+							});
+							return;
+						}
+						if(this.newpwdTwo != this.newpwd) {
+							new fui({
+								text: '两次密码输入不一致,请重新输入'
+							});
+							return;
+						}
+						editPwd({
+							data: {
+								lpw: hex_md5(this.lpwd),
+								npw: this.newpwd,
+								taid: plus.storage.getItem('faid')
+							},
+							success: function(data) {
+								mui.toast('修改密码成功!');
+								mui.back();
+							}
+						})
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							
+						});
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

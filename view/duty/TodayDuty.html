@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<link rel="stylesheet" type="text/css" href="../../js/lib/swiper.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../js/lib/calendar_base.css" />
+		<link rel="stylesheet" type="text/css" href="../../js/lib/showcase.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body{
+			background: #FFFFFF;
+		}
+		 #TodayDuty_app .dutyWrap{
+			background: #FFFFFF;
+			margin-top: 20px;
+			padding: 0.3rem 0.4rem 0.05rem;
+            border-radius: 4px;
+            box-shadow: 0px 0px 4px 0px rgba(236, 236, 236, 1);
+          }
+		 #TodayDuty_app .dutyWrap .name{
+		 	font-size: 17px;
+		 	color: #101010;
+		 	font-weight: bold;
+		 }
+		 #TodayDuty_app .dutyWrap .school{
+		 	font-size: 14px;
+		 	color: #9D9D9D;
+		 }
+		 #TodayDuty_app ul{
+		 	padding-left: 0;
+		 	
+		 }
+          #TodayDuty_app ul.orderNumber li{
+          	font-style:normal ;
+			display: inline-block;
+			padding: 0 0.1rem;
+			background: #2196F3;
+			color: #FFFFFF;
+			border-radius: 4px;
+			font-size: 14px;
+			margin-right: 0.5rem;
+			margin-bottom: 0.3rem;
+		} 
+	</style>
+	<body>
+		<div id="TodayDuty_app">
+			<header class="mui-bar mui-bar-nav bg-white">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			</header>
+			<div style="width:100%;padding: 60px 0.4rem 10px;z-index:3;position: fixed;background:#ffffff;box-sizing: border-box;">
+				<h3 class="active" style="color: #101010;padding-bottom: 5px;font-size:36px!important;">值班信息</h3>
+			</div>
+			<div class="mui-content"">
+				<div class="mui-scroll" style="padding-left: 0.3rem;padding-right: 0.3rem;padding-bottom: 20px;">
+					<div style="margin-top:100px ;box-shadow: 0px 0px 4px 0px rgba(236, 236, 236, 1)">
+						<div class="em-journal-title">
+							<div class="em-per-block pre">
+								<span class="mui-icon mui-icon-arrowleft"></span>
+								<span>上一月</span>
+							</div>
+							<div class="em-per-block mid">
+								<span>...</span>
+							</div>
+							<div class="em-per-block next">
+								<span>下一月</span>
+								<span class="mui-icon mui-icon-arrowright"></span>
+							</div>
+						</div>
+
+						<!--日历容器-->
+						<div id="calendar">
+
+						</div>
+						<!--<div class="backToday">
+			                                      返回今天
+		             </div>-->
+		               
+					</div>
+					<!--值班列表-->
+					<div class="dutyWrap" v-for="item in dutyList">
+						   <div class="left-mess flex flex-y-top just-center">
+						 	    <span class="name" v-text="item.teacher.rname"></span>
+						 	    <div>
+						 		   <span class="school" v-text="schoolPost(item)" style="margin-right: 10px;">干部</span>
+						 		    <span class="school" v-text="schoolArea(item)">丁桥校区</span>
+						 	    </div>
+						   </div>
+						    <div >
+						    	 <ul class='orderNumber' >
+						    	 	<li v-text="items.name" v-for="items in item.classgrades"></li>
+						    	 </ul>
+						    </div>
+					  </div>
+					  <p class="NoData"v-if="dutyList.length==0" v-text="NoData"></p>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script type="text/javascript" src="../../js/user/role.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/lib/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/lib/mustache.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/lib/calendar_base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/lib/calendar_showcase.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/api/duty.js"></script>
+		<script type="text/javascript">
+			
+			var TodayDuty_app = new Vue({
+				el:'#TodayDuty_app',
+				data:{
+					dutyList:[],
+					
+				},
+				mixins: [userRole],
+				mounted:function(){
+					var that= this;
+				  mui.plusReady(function() {
+					   that.NowDuty();  
+                   })
+                  mui.init();	
+				},
+				methods:{
+				  //职务
+				    schoolPost:function(item){
+				  	  var arr=['干部','教师'];
+				  	  return arr[item.type]
+				    },
+				  //校区
+				   schoolArea:function(item){
+				   	 var obj={"1":"丁桥校区","2":"翠苑校区"}
+				   	 return obj[item.school_district_id]
+				   },
+//				   获取当天的值班情况
+				   NowDuty:function(){
+				   	var date = new Date();
+					var dateS= date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+				      this.DutyList(dateS); 
+				   },
+//				   通过日期获取值班安排情况
+				   DutyList:function(time){
+				   	    var that = this;
+				   	 	var params={
+				   		   time:new Date(time.replace(/-/g, "/")).getTime()
+				   	      }
+				   	 	plus.nativeUI.showWaiting( "加载中..." )
+				    	getDutyList({
+				   		     data:params,
+				   		   success:function(data){
+				   			 that.dutyList=data.data;
+				   			 if(that.dutyList.length==0){
+				   			 	that.NoData='暂无'
+				   			 }
+				   		   },error:function(){
+				   		   	   that.NoData='暂无'
+				   		   }
+				    	})
+				   },
+//				   mui初始化
+				   plusReady:function(){
+				   	  var that = this;
+					    
+				   }
+				   
+				}
+			})
+			
+			var customBiz = {
+	init: function() {
+		var self = this;
+		// 初始化日历
+
+		var calendar = new Calendar({
+			// swiper滑动容器
+			container: "#calendar",
+			// 上一月节点
+			pre: ".pre",
+			// 下一月节点
+			next: ".next",
+			// 回到今天
+			backToToday: ".backToday",
+			// 业务数据改变
+			dataRequest: function(currdate, callback, _this) {
+				
+				// 无日程安排
+				var data = [{
+					"date": "2018-04-18"
+				}, {
+					"date": "2018-04-17"
+				}, {
+					"date": "2018-04-16"
+				}];
+				callback && callback(data);
+				
+			},
+			// 点击日期事件
+			onItemClick: function(item) {
+				var defaultDate = item.date;
+				// 设置标题
+				setTitle(defaultDate);
+				TodayDuty_app.DutyList(defaultDate);
+			},
+			// 滑动回调
+			swipeCallback: function(item) {
+				var defaultDate = item.date;
+				// 设置标题
+				setTitle(defaultDate);
+				
+				// 动态新增点击样式
+				calendar.addActiveStyleFordate(defaultDate);
+				TodayDuty_app.DutyList(defaultDate);
+				
+			},
+			// 调试
+			isDebug: false
+		});
+		// 设置标题
+		var titleNode = document.querySelector('.mid span');
+
+		function setTitle(date) {
+			titleNode.innerText = date;
+		}
+
+	}
+}
+ 
+// 初始化
+customBiz.init();	
+			
+		</script>
+	</body>
+
+</html>

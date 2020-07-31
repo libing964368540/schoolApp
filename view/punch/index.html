@@ -1,0 +1,514 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		body,
+		html,
+		#app,
+		.mui-content {
+			height: 100%;
+		}
+		
+		.punch-box {
+			margin: 0.25rem 0;
+		}
+		
+		.punch-box .mui-badge[type="1"] {
+			background: #8BC34A;
+		}
+		
+		.punch-box .mui-badge[type="100"] {
+			background: #FF9800;
+		}
+		
+		.punch-box .mui-badge[type="200"] {
+			background: #3F51B5;
+		}
+		
+		.punch-box .mui-badge[type="300"] {
+			background: #FF4747;
+		}
+		.mui-badge {
+			min-width: 0.7rem;
+			min-height: 0.7rem;
+			max-width: 0.7rem;
+			max-height: 0.7rem;
+			font-size: 0.2rem;
+			position: absolute;
+			top:0.18rem;
+			left: 0;
+			
+		}
+		.statasIcon {
+			display: inline-block;
+			background: #C3C3C3;
+			padding: 0 0.15rem;
+			color: #FFFFFF;
+			border-radius: 4px;
+			margin-left: 15px;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<div class="">
+				<header class="mui-bar mui-bar-nav bg-white">
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<i class="mui-pull-right material-icons" style="font-style: normal;padding-top: 10px;font-size: 30px!important;padding-right: 0.2rem;" id="shaixuan">more_horiz</i>
+				</header>
+				<div class="top-title" style="top:44px">
+					<div class="mui-content-padded">
+						<div class="web-title">
+							<h3 class="active mg-r-10" style="font-size: 36px;margin-left: 5px;display: inline-block;color: #101010;">考勤</h3>
+							<p class="statasIcon" v-text="stateText"></p>
+						</div>
+						<div class="search-input-box flex flex-y-center" style="box-shadow:1px 0px 9px #e4e2e2;height: 45px;">
+							<i class="material-icons icon-greey" style="margin-left: 10px;font-size: 18px;">search</i>
+							<form class="flex-1 flex flex-y-center" action="#" onsubmit="return false;">
+								<input v-model="searchText" id="search-input" @keyup.13="search" type="search" class="mui-input-clear " placeholder="搜索">
+								<i @tap="searchText = ''" v-show="searchText != ''" class="material-icons icon-greey" style="font-size: 20px;margin-right: 0.3rem;">cancel</i>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div id="refreshContainer" class="mui-content mui-scroll-wrapper" style="margin-bottom: 10px;">
+					<div class="mui-scroll" style="margin-top: 3.1rem;padding: 0 0.5rem;">
+						<div v-for="item in PunchList" class="punch-box flex flex-y-center " style="position: relative;padding-left: 0.7rem;">
+							<div class="flex-1 flex flex-y-center">
+								<div v-text="getTypeText(item)" :type="item.state" class="mui-badge mui-badge-primary flex flex-y-center flex-x-center"></div>
+								<div class="mg-l-20" style="width: 5.4rem;border-bottom: 1px solid #f4f4f4;padding-bottom: 10px;">
+									<div class="flex just-center flex-y-center" style="margin-bottom: 5px;">
+										<p v-text="item.student_name" style="font-size: 17px;color: #101010;padding-top: 5px;margin-right: 10px;"></p>
+										<div class="textRight">
+											<p v-text="item.classgrade_name" style="color: #8B8B8B;font-size: 14px;"></p>
+										</div>
+									</div>
+									<div class="flex flex-y-center" style="margin-bottom: 5px;">
+										<p v-text="getYmd(item)" class="font-size-mid" style="color:#101010"></p>
+										<p v-text="getBehavior(item)" style="margin-left: 5px;color:#101010"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<p class="NoData" v-if="PunchList.length==0" v-text="NoData"></p>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+		<script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/api/punch.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var stuentPage = function() {
+				var _m = {};
+				var self = _m;
+				var main = plus.webview.currentWebview();
+				var menu;
+				var mask;
+				var showMenu = false;
+				self.showCelan = function() {
+					console.log(document.getElementById("shaixuan"));
+					document.getElementById("shaixuan").addEventListener("tap", function() {
+						self.openMenu();
+					});
+				};
+				self.closeMenu = function() {
+					//窗体移动
+					self._closeMenu();
+					//关闭遮罩
+					mask.close();
+				};
+				self._closeMenu = function() {
+					if(showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "fixed";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "44px";
+						}
+						main.setStyle({
+							left: '0',
+							transition: {
+								duration: 150
+							}
+						});
+						//menu页面同时移动
+						menu.setStyle({
+							left: '100%',
+							transition: {
+								duration: 150
+							}
+						});
+						//等窗体动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+						showMenu = false;
+					}
+				};
+				self.openMenu = function() {
+					if(!showMenu) {
+						//解决android 4.4以下版本webview移动时，导致fixed定位元素错乱的bug;
+						if(mui.os.android && parseFloat(mui.os.version) < 4.4) {
+							document.querySelector("header.mui-bar").style.position = "static";
+							//同时需要修改以下.mui-contnt的padding-top，否则会多出空白；
+							document.querySelector(".mui-bar-nav~.mui-content").style.paddingTop = "0px";
+						}
+
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						//显示完毕后，根据不同动画效果移动窗体；
+						menu.show('none', 0, function() {
+							main.setStyle({
+								left: '-70%',
+								transition: {
+									duration: 150
+								}
+							});
+							menu.setStyle({
+								left: '30%',
+								transition: {
+									duration: 150
+								}
+							});
+						});
+						//显示主窗体遮罩
+						mask.show();
+						showMenu = true;
+					}
+				}
+				self.getCelanWebview = function() {
+					setTimeout(function() {
+						menu = mui.preload({
+							id: 'punch-offcanvas-drag-left-plus-menu.html',
+							url: 'punch-offcanvas-drag-left-plus-menu.html',
+							styles: {
+								left: "30%",
+								width: '70%',
+								zindex: 9997
+							}
+						});
+					}, 300);
+				};
+				self.meuiSet = function() {
+					//重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+					mui.menu = function() {
+						if(showMenu) {
+							self.closeMenu();
+						} else {
+							self.openMenu();
+						}
+					}
+				};
+				self.watchMenu = function() {
+					window.addEventListener("filter", function(event) {
+						var opt = JSON.parse(event.detail.value);
+							if(opt.type == '') vm.states ='';
+							if(opt.state == null) vm.behavior = null;
+							if(opt.statesName!='请选择'){vm.stateText=opt.statesName};
+							vm.getPunchList({
+								states: opt.type,
+								behavior: opt.state
+							})
+						    self.closeMenu();
+					});
+				};
+				self.init = function() {
+					mask = mui.createMask(self._closeMenu);
+					self.getCelanWebview();
+					self.showCelan();
+					self.meuiSet();
+					self.watchMenu();
+				};
+				return _m;
+			}
+			vm=new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					searchText: '',
+					page: 0,
+					count: 0,
+					PunchList: [],
+					stateText:'迟到',
+					states:100,
+					behavior:''
+				},
+				methods: {
+					//判断刷卡方式
+					getBehavior:function(item){
+						if(item.punch_time){
+							var a=item.behavior == 1 ?'进校' :'离校'
+						}else{
+							var a='系统生成'
+						}
+						return a;
+					},
+					//通过权限判断传参来展示不同权限下展示的打分记录
+					getShowforPower: function(params) {
+						const that = this;
+						that.role = getUserRole();
+						const arr=[];
+						if(plus.storage.getItem('userinfo')){
+                            var positionId = JSON.parse(plus.storage.getItem('userinfo')).identitysData;
+                           
+                         } 
+						if(that.role == 4) { //班主任或副班主任
+							var classgrades = positionId['4'].classgrades
+							if(classgrades.length == 0) {
+								that.NoData="暂无";
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_ids = arr.join('-');
+							}
+						}
+						if(that.role == 8) { //专业部
+							var majorGroup = positionId['8'].majorGroup
+							if(!majorGroup) {
+								that.NoData="暂无";
+								new fui({
+									text: '专业部权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								params.major_group_ids = majorGroup.id;
+							}
+						}
+						if(that.role == 12) { //专业部
+							var classgrades = positionId['12'].classgrades
+							if(classgrades.length == 0) {
+								that.NoData="暂无";
+								new fui({
+									text: '班主任权限下未绑定班级，请绑定后重新登录再试',
+									bg: '#FF4747'
+								})
+								return false;
+							} else {
+								for(var i = 0; i < classgrades.length; i++) {
+									arr.push(classgrades[i].id);
+								}
+								params.classgrade_ids = arr.join('-');
+							}
+						}
+						return params;
+
+					},
+					/*
+					 * 获取考勤记录
+					 *   上拉加载 
+					 * */
+					getPunchList(opt) {
+						var that = this;
+						var params = {};
+						if(!this.getShowforPower(params)){
+							return;
+						}
+						if(opt) {//通过筛选条件进行传值
+                           if(opt.states){this.states=opt.states};
+                           if(opt.behavior==0||opt.behavior==1){this.behavior=opt.behavior};
+                            this.PunchList = [];
+							this.page = 0;
+							mui('#refreshContainer').pullRefresh().refresh(true);
+						}
+						if(this.searchText != null && this.searchText != '') params.keyword = this.searchText;
+						if(this.states){params.states=this.states}
+						if(this.behavior==1||this.behavior==0){params.behavior=this.behavior};
+						params.page = this.page;
+						params.size = 10;
+						getPunchList({
+							data: params,
+							success: function(data) {
+								if(data.data.list.length==0&&that.PunchList.length==0){
+									that.NoData='暂无'
+									that.PunchList=[]; 
+								    mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								}else{
+									that.NoData='';
+								    for(var i = 0; i < data.data.list.length; i++) {
+									    that.PunchList.push(data.data.list[i]);
+								    }
+								    that.count = data.data.count;
+								    that.page += 1;
+								    if(that.count == that.PunchList.length) {
+									     mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+								     } else {
+								        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+								     }
+								   
+								}
+							},
+							error: function() {
+
+							}
+						})
+
+					},
+					//考勤刷选
+					getTypeText: function(item) {
+						switch(item.state) {
+							case 1:
+								return '正常';
+								break;
+							case 100:
+								return '迟到';
+								break;
+							case 200:
+								return '晚走';
+								break;
+							case 300:
+								return '重复';
+								break;
+							case 500:
+								return '请假';
+								break;	
+						}
+					},
+					//搜索
+				    search: function() {
+						document.getElementById('search-input').blur();
+						plus.nativeUI.showWaiting( "加载中..." )
+						mui('#refreshContainer').pullRefresh().refresh(true);
+						this.getPunchList({
+							keyword:this.searchText
+						})
+					},
+					//处理消息时间
+					getYmd: function(item) {
+						if(item.punch_time){
+							var time=item.punch_time;
+							var date = new Date(parseInt(time));
+						    return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate()) + ' ' + buqi(date.getHours()) + ':' + buqi(date.getMinutes())+'（扫码）';
+						}else{
+							var time=item.time;
+							var date = new Date(parseInt(time));
+						    return date.getFullYear() + '/' + buqi((date.getMonth() + 1)) + '/' + buqi(date.getDate()) + ' ' + buqi(date.getHours()) + ':' + buqi(date.getMinutes());
+						}
+						
+					},
+					//上拉加载
+					pullUpRefresh: function() {
+						mui('#refreshContainer').pullRefresh().enablePullupToRefresh(false);
+						this.getPunchList();
+					},
+					//下拉刷新
+					pullDownRefresh: function() {
+						var that = this;
+						var parmas = {};
+						if(!this.getShowforPower(parmas)){
+							return;
+						}
+						if(this.searchText != null && this.searchText != '') parmas.keyword = this.searchText;
+						if(this.states){parmas.states =this.states;}
+						if(this.behavior==1||this.behavior==0){parmas.behavior=this.behavior};
+						parmas.page = 0;
+						parmas.size = 10;
+						var that = this;
+						plus.nativeUI.showWaiting( "加载中..." )
+						
+						getPunchList({
+							data: parmas,
+							success: function(data) {
+								mui('#refreshContainer').pullRefresh().endPulldown();
+								that.PunchList = [];
+								if(data.data.list.length == 0) {
+									that.NoData = '暂无';
+									mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+								} else {
+									that.page = 0;
+									that.NoData = '';
+									mui('#refreshContainer').pullRefresh().refresh(true);
+									that.count = data.data.count;
+									that.page += 1;
+									for(var i = 0; i < data.data.list.length; i++) {
+										that.PunchList.push(data.data.list[i]);
+									}
+								}
+							},
+							error: function() {
+								that.NoData = '暂无'
+								mui('#refreshContainer').pullRefresh().endPulldown();
+							}
+						})
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							stuentPage().init();
+							that.back();
+							//mui('#refreshContainer').scroll();
+						})
+					},
+					back: function() {
+						mui.init({
+							pullRefresh: {
+								container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+								up: {
+									height: 50, //可选.默认50.触发上拉加载拖动距离
+									contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+									contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+									callback: this.pullUpRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+								},
+								down: {
+								style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+								color: '#2196f3', //可选，默认“#2BD009” 下拉刷新控件颜色
+								height: '50px', //可选,默认50px.下拉刷新控件的高度,
+								range: '100px', //可选 默认100px,控件可下拉拖拽的范围
+								offset: '180px', //可选 默认0px,下拉刷新控件的起始位置
+								auto: false, //可选,默认false.首次加载自动上拉刷新一次
+								callback:this.pullDownRefresh									
+								//必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							}
+							},
+							beforeback: function() {
+								//获得列表界面的webview
+								var list = plus.webview.currentWebview().opener();
+								mui.fire(list, 'tabPageShow');
+								//返回true，继续页面关闭逻辑
+								return true;
+							}
+
+						});
+						this.getPunchList();
+					}
+				},
+				mounted: function() {
+					
+					this.plusReady();
+					 document.querySelector('body').addEventListener('touchstart', function(e) {
+                          if(e.target.className != 'input') {
+                             document.getElementById('search-input').blur();
+                            }
+                    });//解决在ios固定定位失效的数据
+				}
+			})
+		</script>
+	</body>
+
+</html>

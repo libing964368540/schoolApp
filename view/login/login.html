@@ -1,0 +1,342 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body,
+		#app {
+			background: #FFFFFF;
+		}
+		
+		.web-title {
+			margin: 1rem 0.68rem 1rem;
+		}
+		
+		.mui-table-view:before,
+		.mui-table-view:after,
+		.mui-input-group .mui-input-row:after,
+		.mui-table-view-cell:after {
+			height: 1px!important;
+		}
+		
+		.mui-input-row label {
+			padding: 0.16rem 0;
+			width: 15%;
+		}
+		
+		.mui-input-row label~input,
+		.mui-input-row label~select,
+		.mui-input-row label~textarea {
+			width: 85%;
+		}
+		
+		input {
+			border-top: none!important;
+			border-left: none!important;
+			border-right: none!important;
+			border-radius: 0px!important;
+			/*border-bottom: 1px solid #eeeeee;*/
+			padding-left: 0!important;
+			font-size: 17px;
+		}
+		#app .mui-input-group .mui-input-row:after, .mui-input-group .mui-input-row:after {
+			background-color: #FFFFFF;
+		}
+		::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #b6b6b6!important;
+		}
+		
+		:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #b6b6b6!important;
+		}
+		
+		::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #b6b6b6!important;
+		}
+		
+		:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #b6b6b6!important;
+		}
+		
+		.from {
+			padding: 0 0.68rem;
+		}
+		
+		.from .from-line {
+			margin-bottom: 0.9rem;
+		}
+		.from button{
+			width: 100%;
+			border-radius: 5px;
+			line-height: 45px;
+			font-size: 17px;
+			margin-top: 20px;
+			padding: 0;
+		}
+		.from button.active{
+			background: #B6B6B6;
+		}
+		#footer{
+			position: absolute;
+			bottom: 50px;
+			text-align: center;
+			left: 0;
+			right: 0;
+			font-size: 12px;
+			color: #a1a1ad;
+		}
+		#footer i{
+			font-style: normal;
+			color: #101010
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white" v-show="deviceFlag">
+			    <!--<div class="tr" style="margin: 0.3rem 0.5rem 0;position: relative;height: 30px;">
+				     <span style="color: #2196F3;display: inline-block;cursor: pointer;font-size: 17px;" @tap="showView('register.html')">注册</span>
+				</div>-->
+		  </header>
+		<div class="mui-content">
+			<div class="web-title">
+				<span class="active mg-r-10" style="font-size: 36px;color: #101010;">登录School</span>
+			</div>
+			<div class="from mui-input-group">
+				<div class="from-line mui-input-row">
+					<input v-model="value2Computed" type="text" placeholder="请输入用户名" autocapitalize="off" autocorrect="off" @focus="hideS(1)" @blur="showS(2)">
+				</div>
+				<div class="from-line mui-input-row">
+					<input v-model="pwd" type="password" placeholder="请输入密码" @focus="hideS(1)" @blur="showS(2)">
+				</div>
+			</div>
+			<div class="tc from">
+				<button type="button" class="mui-btn mui-btn-primary" @tap="login">登录</button>
+			</div>
+		</div>
+		<footer id="footer">登录即代表阅读并同意<i @tap="showView('service.html')" >用户服务协议</i>和<i @tap="showView('Notice.html')">隐私协议</i></footer>
+		</div>		
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/api/req.js?v=2"></script>
+		<script src="../../js/api/login.js"></script>
+		<script src="../../js/lib/lib.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+			var loginVm=new Vue({
+					el: '#app',
+					data:function() {
+						return {
+							userName: '',
+							pwd: '',
+							mobileClientInfo: {},
+							deviceFlag:false
+						}
+					},
+					mounted: function() {
+						this.plusReady();
+					},
+                    computed : {
+                         value2Computed : {
+                                 get: function(){
+                                    return this.userName;
+                                    },
+                                 set : function(val){
+                                     this.userName = val.toLowerCase();
+                                    }
+                               }
+                   },
+					methods: {
+						getMobileClientInfo: function() {
+							var that = this;
+							plus.nativeUI.showWaiting( "拼命加载中..." );
+							var t = setInterval(function(){
+								that.mobileClientInfo = plus.push.getClientInfo();
+								if(that.mobileClientInfo.clientid) {
+									clearInterval(t);
+									plus.nativeUI.closeWaiting();
+								}
+							},20)
+							
+						},
+						//测试环境和上线环境判断
+//						judgeUrl:function(){
+//							var params = {};
+//							    params.v = "1.0.0";
+//							    plus.nativeUI.showWaiting( "加载中..." );
+//							    judgeUrl({
+//							    	data:params,
+//							    	success:function(data){
+//							    		plus.nativeUI.closeWaiting();
+//							    		if(data.e){
+//							    			plus.storage.setItem('judgeUrl',0);            //47
+//							    		}else{
+//							    			plus.storage.setItem('judgeUrl',1);            //39
+//							    		}
+//							    	},
+//							    	error:function(){
+//							    		plus.nativeUI.closeWaiting();
+//							    	}
+//							    })
+//						},
+						plusReady: function() {
+							var that = this;
+							mui.plusReady(function() {
+								that.getMobileClientInfo();
+								if(mui.os.ios) { //判断是ios还是安卓设备
+									ws = plus.webview.currentWebview();
+									ws.setStyle({
+										'popGesture': 'none'
+									}); //ios关闭右划
+//									plus.storage.setItem('judgeUrl',"0"); 
+//									if(plus.storage.getItem('judgeUrl')!= "1"){
+//									  that.deviceFlag = true;//是否注册
+//									}
+								}
+								if(mui.os.android) {
+									//安卓按两次关闭app
+									var clickNum = 0;
+									mui.back = function(event) {
+										clickNum++;
+										if(clickNum == 2) {
+											plus.runtime.quit();
+										} else {
+											mui.toast("再按一次退出应用");
+										}
+										setTimeout(function() {
+											clickNum = 0;
+										}, 1500);
+										return false;
+									}
+									that.deviceFlag = false;
+								}
+							});
+							
+						},
+						login: function() {
+							var that = this;
+							var reg=/^\d{17}(\d|X|x)$/
+							if(this.userName == '') {
+								new fui({
+									text: '用户名不能为空',
+									bg: '#FF4747'
+								})
+								return;
+							}
+							if(this.pwd == '') {
+								new fui({
+									text: '密码不能为空',
+									bg: '#FF4747'
+								})
+								return;
+							}
+							if(this.userName.length==18&&reg.test(this.userName)){
+								this.userName=this.userName.toUpperCase();
+							}
+							if(!this.mobileClientInfo.clientid){
+								    this.getMobileClientInfo();
+									mui.toast('请打开核心素养app的接受通知的权限');
+									return;
+							 }else{
+//							 	mui.alert(this.mobileClientInfo.clientid);
+							 }
+							 if(this.userName=="admin"){
+							 	new fui({
+									text: '用户名不存在',
+									bg: '#FF4747'
+								})
+							 	return;
+							 }
+							plus.nativeUI.showWaiting( "登录中..." )
+							login({
+								data: {
+									username: this.userName,
+									password: hex_md5(this.pwd),
+									token: this.mobileClientInfo.token,
+									clientid: this.mobileClientInfo.clientid,
+									clientType: 1
+								},
+								success: function(data) {
+									plus.storage.setItem('token', data.data.token);
+									plus.storage.setItem('username', data.data.username);
+									plus.storage.setItem('faid', data.data.id + '');
+									var role = that.getRole(data.data.accountData.identitysData);
+									plus.storage.setItem('role', role.role);
+									plus.storage.setItem('indexRole',role.indexrole);
+									plus.storage.setItem('userinfo', JSON.stringify(data.data.accountData));
+									
+									var index = plus.webview.getLaunchWebview();
+									var wvs = plus.webview.all();
+									var indexWebview = plus.webview.currentWebview();
+									for(var i = 0, len = wvs.length; i < len; i++) {
+										//关闭除首页页面和登陆外的其他页面
+										if(wvs[i].getURL() == index.getURL() || wvs[i].getURL() == indexWebview.getURL()){
+											continue;
+										}
+										plus.webview.close(wvs[i]);
+									}
+									mui.fire(index, 'refresh');
+									index.show();
+									setTimeout(function() {
+										plus.webview.close(indexWebview);
+									}, 20)
+								}
+							})
+						},
+						getRole: function(item) {
+							var role = [];
+							for(var i in item) {
+								role.push({
+									name: item[i].name,
+									key: item[i].key
+								});
+							}
+							return {
+								role: JSON.stringify(role),
+								indexrole: JSON.stringify(role[0])
+							}
+						},
+						showView : function(path){
+						    mui.openWindow({
+								url: path,
+								id: path,
+								extras: {
+									name: this.title
+								}
+							}) 	
+						},
+						hideS:function(){
+							$('#footer').hide();
+						},
+						showS:function(){
+							$('#footer').show();
+						}
+					
+					}
+				})
+			})
+			window.addEventListener('loadpageLogin', function(event) {
+				var opt = JSON.parse(event.detail.value);
+				 loginVm.userName=opt.userName;
+				 loginVm.pwd=opt.pwd;
+				 loginVm.login();
+			})
+		</script>
+	</body>
+
+</html>

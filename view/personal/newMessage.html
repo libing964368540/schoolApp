@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		body,
+		html,
+		.mui-content {
+			background: #f9f9f9;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title color-black">消息通知</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view mg-btm-20">
+				<li class="mui-table-view-cell">新消息通知
+					<span class="mui-badge mui-badge-primary">已关闭</span>
+				</li>
+			</ul>
+			<p class="tc mg-btm-20 font-size-small">请在设备的"通知中心"功能中，找到应用程序打开消息通知。</p>
+			<div class="mui-content-padded">
+				<button type="button" class="mui-btn mui-btn-primary mui-btn-block">前往开启消息通知</button>
+			</div>
+		</div>
+		
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style type="text/css">
+		h4 {
+			padding: 25px 0 0px;
+			margin-bottom: 0.1rem;
+			font-weight: initial;
+			color: #444444;
+			font-size: 14px;
+			
+		}
+		
+		.mui-table-view p {
+			color: #a2a2a2;
+			line-height: 24px;
+		}
+		
+		textarea,.ApplyContent {
+			font-size: 14px;
+			border: none;
+			border-bottom: 1px solid #F3F5F8;
+			padding-left: 0;
+		}
+		.mui-input-group .mui-input-row {
+			height: auto;
+		}
+		.FontSize17{
+			font-size: 17px!important;
+			color: #8B8B8B;
+		}
+		.FontSize17.message{
+			color: #444444;
+		}
+		.FontSize14{
+			font-size: 14px!important;
+			color: #8B8B8B;
+			font-style: normal;
+		}
+		.mui-table-view-cell.score{
+			padding: 0.1rem 0;
+		}
+		p.red{
+			color: #FF4747!important;
+		}
+		p.blue{
+			color: #2196F3!important;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="mui-bar mui-bar-nav bg-white">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			</header>
+			<div class="mui-content" style="margin-top: 1.5rem; padding-left:0.5rem;padding-right: 0.5rem;height: 300px;text-align: center;">
+				  <div id="Mycode" style="height: 300px;margin-top: 50px;">
+				  	
+				  </div>
+				
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/jquery_code/jquery.code.js"></script>
+		<script src="../../js/jquery_code/qrcode.js"></script>
+		<script type="text/javascript">
+			   mui.init();
+			   var role = getUserRole();
+			   if(role==6){
+			     	$('#Mycode').qrcode({
+                      text:plus.storage.getItem('username')
+                    }); 
+			   }else{
+			   	   var info = JSON.parse(plus.storage.getItem('studentDetail'));
+			   	   $('#Mycode').qrcode({
+                      text:info.username
+                    }); 
+			   }
+			 	 // 生成二维码
+		</script>
+	</body>
+
+</html>

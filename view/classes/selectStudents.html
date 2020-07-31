@@ -1,0 +1,323 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/material-icons.css" />
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+	</head>
+	<style>
+		.mui-content #selec-class {
+			box-shadow: none;
+			background: #F3F5F8;
+			border-radius: 0;
+			font-weight: inherit;
+			z-index: 3;
+			margin: 0;
+			color: #101010;
+			font-size: 14px;
+			width: 100%;
+			padding: 13px 0;
+		}
+		.mui-checkbox.mui-left input[type=checkbox],.mui-radio.mui-left input[type=radio]{
+			left: 15px;
+			top:13px!important;
+		}
+		.top-title .mui-checkbox.mui-left input[type=checkbox],.top-title .mui-radio.mui-left input[type=radio]{
+			left: 0px;
+		}
+		.top-title .mui-checkbox.mui-left label,.top-title .mui-radio.mui-left label{
+			padding-left: 0.8rem;
+		}
+		/*.all-selec {
+			margin: 0 15px;
+			padding: 0.2rem 0 0.1rem;
+			background: #fff;
+			z-index: 3;
+			border-bottom: 1px solid #F3F5F8;
+		}*/
+		
+		.mui-content-padded {
+			z-index: 3;
+		}
+		#refreshContainer .mui-input-row{
+			margin: 0.2rem 0;
+		}
+		.all-selec {
+			width: 1.4rem;
+			margin: 0 15px;
+			padding: 0.2rem 0 0.1rem;
+			background: #fff;
+			z-index: 3;
+			position: absolute;
+			right: 0;
+			text-align: right;
+			border-radius:0.05rem!important;
+			color: #a6a6a6;
+		}
+		.all-selec label.all{
+			background: #2196f3;
+			color: #FFFFFF;
+			border-radius: 5px;	
+		}
+	</style>
+
+	<body>
+		<div id="app">
+		<header class="mui-bar mui-bar-nav bg-white">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<div class="all-selec">
+					<div class="mui-input-row mui-checkbox mui-left" @tap="allSele">
+						<label style="margin:0;padding:0.05rem 0.2rem;font-size: 14px;" :class="{all:selectForAll}"><i class="material-icons"  style="font-size: 18px;color: #FFFFFF;vertical-align: middle;position: absolute;left: 8px;top:4px;">done</i>全部</label>
+						<!--<input :checked="isAll ? true : false" id="selectall" type="checkbox">-->
+						<input :checked="isAll" id="selectall" type="checkbox" v-show="false">	
+					</div>
+					<!--<div class="mui-input-row mui-checkbox mui-left" @tap="fanSele">
+						<label style="margin:0;padding:0.05rem 0.2rem;font-size: 14px;" :class="{all:selectForNoAll}"><i class="material-icons"  style="font-size: 18px;color: #FFFFFF;vertical-align: middle;">done</i>反选</label>
+						<!--<input :checked="isAllInvert ? true :false" type="checkbox">-->
+						<!--<input :checked="isAllInvert" type="checkbox" v-show="false">	
+					</div>-->
+				</div>
+		</header>
+		<div class="mui-content" >
+			<div class="top-title erji" style="padding: 0;padding-left:0.5rem ;padding-right: 0.5rem;">
+				<!--<button id='selec-class' class="mui-btn mui-btn-block" type='button' v-text="seleIndexClass.text ? seleIndexClass.text : ''"></button>-->
+				<div class="web-title">
+					<span class="active mg-r-10" style="font-size: 32px;color: #444444;">选择学生</span>
+				</div>
+				<div  class="flex just-center" style="margin-top: 0.7rem;border-bottom: 0.01rem solid #F3F5F8;padding-bottom: 0.5rem;">
+					<span  v-text="seleIndexClass.text ? seleIndexClass.text : ''"></span>
+					<i class="material-icons color-gray">chevron_right</i>
+				</div>
+			</div>
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper" style="margin-bottom: 20px;">
+				<div class="mui-scroll" style="padding-left: 0.1rem;padding-right: 0.4rem;">
+					<!--数据列表-->
+					<div class="mui-table-view mui-table-view-chevron" style="margin-top: 3.7rem;">
+						<form class="mui-input-group">
+							<div class="mui-input-row mui-checkbox mui-left " v-for="item in studentList" @tap="seleIndex(item)" style="height: 60px;" >
+								<label style="display: inline-block;padding-top: 0.3rem;">
+									<div class="flex just-center" style="border-bottom: 1px solid #F3F5F8;padding-bottom: 0.35rem;">
+									    <!--<span v-if="role && checkRole('4')" v-text="'(' + (item.accountData.identitysData[6].st_classgrade_number || '') + ')'"></span>-->
+									    <span v-text="item.accountData.rname"></span>
+									    <span v-if="role && checkRole('4')" v-text="buqi(item.accountData.identitysData[6].st_classgrade_number || '')"></span>
+									    <span  else v-text="item.accountData.identitysData[6].st_main_number || ''"></span>
+									</div>    
+								</label>
+								<input :checked="item.isSele == 0 ? false : true" value="" type="checkbox">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="mui-content-padded fixed">
+				<button type="button" class="mui-btn mui-btn-primary school_btn" @tap="succStudent" >确定</button>
+			</div>
+		</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script type="text/javascript" src="../../js/vue.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/api/student.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript">
+			function buqi(str) {
+				return str < 10 ? '0' + str : str;
+			}
+			var chkall = document.getElementById("selectall");
+			const seleforXueS = new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					isAll: false,
+					isAllInvert: false,
+					studentList: [],
+					classList: [],
+					indexSele: 0,
+					count: 0,
+					page: 0,
+					seleIndexClass: {},
+					selectForNoAll:false,  //判断反选按钮是否加类名
+					selectForAll:false   //判断全选按钮是否加类名
+				},
+				watch: {
+					indexSele: function() {
+						if(this.indexSele == this.studentList.length) {
+							this.isAll = true;
+						} else {
+//							this.isAll = false;
+						}
+					},
+					isAll: function() {
+						if(this.isAll) {
+							this.isAllInvert = false;
+						}
+					}
+				},
+				mounted: function() {
+					this.plusReady();
+				},
+				methods: {
+					succStudent: function() {
+						if(this.indexSele == 0) {
+							mui.toast('请选择打分学生!');
+							return;
+						}
+//						var cid = plus.webview.currentWebview().opener();
+                        var cid = plus.webview.getWebviewById("batchscore.html")
+						console.log(cid);
+						mui.fire(cid, 'seleStudent', {
+							list: JSON.stringify(this.getSeleStudent())
+						});
+						mui.back();
+					},
+					getSeleStudent: function() {
+						var arr = [];
+						this.studentList.forEach((item) => {
+							if(item.isSele == 1) {
+								arr.push(item);
+							}
+						})
+						return arr;
+					},
+					getIndexSeleLen: function(item) {
+						if(item.isSele == 1) {
+							this.indexSele += 1;
+						} else {
+							this.indexSele -= 1;
+						}
+					},
+					seleIndex: function(item) {
+						item.isSele = item.isSele == 1 ? 0 : 1;
+						this.getIndexSeleLen(item);
+					},
+					allSele: function() {
+						if(this.isAll) {
+							this.studentList.forEach(item => {
+								item.isSele = 0;
+								this.getIndexSeleLen(item);
+							})
+						} else {
+							this.studentList.forEach(item => {
+								item.isSele = 1;
+								this.getIndexSeleLen(item);
+							})
+						
+						}
+						
+						this.isAll = !this.isAll;
+						this.selectForAll=!this.selectForAll;
+						this.selectForNoAll=false;
+					},
+					fanSele: function() {
+						this.studentList.forEach(item => {
+							item.isSele = item.isSele == 1 ? 0 : 1;
+							this.getIndexSeleLen(item);
+						})
+						this.isAll = false;
+						this.isAllInvert = true;
+						this.selectForAll=false;
+						this.selectForNoAll=true;
+					},
+					//初始化下拉框 
+					seleClassInit: function() {
+						this.userPicker = new mui.PopPicker();
+						var arr = [];
+						//mui 下拉框必须要写个value text 醉了 生成value text数组
+						this.classList.forEach(function(item) {
+							arr.push({
+								value: item.id,
+								text: item.name
+							})
+						})
+						this.userPicker.setData(arr);
+					},
+					//选择某个班级后
+					//获取全部班级
+//					
+					pullUpRefresh: function() {
+						var that = this;
+						this.getStudentList();
+					},
+					getStudentList: function() {
+						var that = this;
+						var parmas = {
+							page: this.page
+						}
+						if(this.role && this.checkRole('4')){parmas.sortType=0;parmas.sort = 4;}
+						if(this.seleIndexClass.value) parmas.cids = this.seleIndexClass.value;
+						parmas.state = 1;
+						parmas.sortType = 0;
+						console.log(JSON.stringify(parmas));
+						getStudentList({
+							data: parmas,
+							success: function(data) {
+								that.count = data.data.count;
+								for(var i = 0; i < data.data.list.length; i++) {
+									data.data.list[i].isSele = 0;
+									that.studentList.push(data.data.list[i]);
+								}
+								that.page += 1;
+								that.isAll = false;
+								if(that.count == that.studentList.length) {
+								
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+								} else {
+									mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+								}
+							}
+						})
+					},
+					downPullInit: function() {
+						mui.init({
+							pullRefresh: {
+								container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+								up: {
+									height: 50, //可选.默认50.触发上拉加载拖动距离
+									contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+									contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+									callback: this.pullUpRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+								}
+							}
+						});
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+//							that.role = getUserRole();
+//							if(that.role!='4'){
+//								that.getStudentList();
+//							}
+							that.downPullInit();
+						})
+					}
+				}
+		})
+		//通过选中的打分班级获取打分学生
+		 window.addEventListener('fireSelectStudent', function(e) {
+		 	    
+                seleforXueS.seleIndexClass.value = e.detail.value.id;
+                seleforXueS.seleIndexClass.text = e.detail.value.name;
+                console.log(seleforXueS.seleIndexClass.text);
+                seleforXueS.studentList = [];
+				seleforXueS.page = 0;
+				seleforXueS.count = 0;
+				seleforXueS.getStudentList();
+				mui('#refreshContainer').pullRefresh().refresh(true);
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<script>
+			document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+		</script>
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			.mui-content {
+				padding-left: 10px;
+				padding-right: 30px;
+			}
+			
+			header.mui-bar {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="app">
+			<div id="offCanvasWrapper">
+				<div class="title">筛选</div>
+				<div class="from">
+					<div>
+						<p>专业部</p>
+						<div id="showUserPicker" class="flex just-center" @tap="showMajorGroupPick">
+							<span v-text="majorGroupPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+					<div>
+						<p>专业</p>
+						<div class="flex just-center" @tap="majorPickShow">
+							<span v-text="majorPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+					<div>
+						<p>班级</p>
+						<div class="flex just-center" @tap="showClassPick">
+							<span v-text="classPick.name"></span>
+							<i class="mui-icon mui-icon-arrowdown" style="color: #8b8b8b;"></i>
+						</div>
+					</div>
+				</div>
+				<div class="btn">
+					<button type="button" class="mui-btn bg-gray color-gray mg-r-10" @tap="clearPick">重置</button>
+					<button type="button" class="mui-btn bg-gray main-color" @tap="filterStudent">确定</button>
+				</div>
+			</div>
+		</div>
+		 <script src="../../js/jquery-1.12.4.min.js"></script>
+		<script src="../../js/vue.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.picker.js"></script>
+		<script src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/user/role.js"></script>
+		<script src="../../js/api/req.js"></script>
+		<script src="../../js/api/classes.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//关闭back、menu按键监听，这样侧滑主界面会自动获得back和memu的按键事件，仅在主界面处理按键逻辑即可；
+			mui.init({
+				keyEventBind: {
+					backbutton: false,
+					menubutton: false
+				}
+			});
+			var main = null;
+			var menuPage = function() {
+				var _m = {};
+				var self = _m;
+				self.getWebviewOpener = function() {
+					main = plus.webview.currentWebview().opener();
+				};
+				self.closeMenu = function() {
+					mui.fire(main, "menu:swiperight");
+				};
+				self.addEvent = function() {
+					window.addEventListener("swiperight", self.closeMenu);
+				};
+				self.init = function() {
+					self.addEvent();
+					self.getWebviewOpener();
+				};
+				return _m;
+			}
+			var vm = new Vue({
+				el: '#app',
+				mixins: [userRole],
+				data: {
+					majorList: [],
+					classList: [],
+					majorGroupList: [],
+					majorPick: {
+						name: '请选择',
+						id: null
+					},
+					majorGroupPick: {
+						name: '请选择',
+						id: null
+					},
+					classPick: {
+						name: '请选择',
+						id: null
+					}
+				},
+				watch: {
+					'majorGroupPick.id' () {
+						this.clearPickAll('majorPick');
+						this.clearPickAll('classPick');
+					},
+					'majorPick.id' () {
+						this.clearPickAll('classPick');
+					}
+				},
+				mounted: function() {
+					
+					this.plusReady();
+				},
+				methods: {
+					filterStudent: function() {
+						
+						mui.fire(main, "seatfilter", {
+							value: JSON.stringify({
+								classPick: this.classPick.id,
+								names: this.classPick.name
+							})
+						});
+					},
+					clearPickAll: function(key) {
+						if(key) {
+							this[key].name = '请选择';
+							this[key].id = null;
+						} else {
+							this.majorPick.name = '请选择';
+							this.majorPick.id = null;
+							this.majorGroupPick.name = '请选择';
+							this.majorGroupPick.id = null;
+							this.classPick.name = '请选择';
+							this.classPick.id = null;
+						}
+					},
+					clearPick: function() {
+						this.clearPickAll();
+
+//						this.clearPickAll('classPick');
+					},
+					showMajorGroupPick: function() {
+						var that = this;
+						this.majorGroupPicker.show(function(items) {
+							that.majorGroupPick.name = items[0].text;
+							that.majorGroupPick.id = items[0].value;
+						});
+					},
+					majorPickShow: function() {
+						var that = this;
+						if(this.majorGroupPick.id) {
+							this.getMarjorList(function(data) {
+								that.majorPicker = new mui.PopPicker();
+								var arr = [];
+								//mui 下拉框必须要写个value text 醉了 生成value text数组
+								data.data.forEach(function(item) {
+									arr.push({
+										value: item.id,
+										text: item.name
+									})
+								})
+								that.majorPicker.setData(arr);
+								that.majorPicker.show(function(items) {
+									that.majorPick.name = items[0].text;
+									that.majorPick.id = items[0].value;
+								});
+							});
+						}
+					},
+					getClassList: function(cb) {
+						var that = this;
+						var parms = {size: 999};
+						if(this.majorGroupPick.id) parms.major_group_id = this.majorGroupPick.id;
+						if(this.majorPick.id) parms.major_id = this.majorPick.id;
+//						if(this.role == '4') parms.director_id = plus.storage.getItem('faid');
+						getClassList({
+							data: parms,
+							success: function(data) {
+								that.classPicker = new mui.PopPicker();
+								var arr = [];
+								data.data.list.forEach(function(item) {
+									arr.push({
+										value: item.id,
+										text: item.name
+									})
+								})
+								that.classPicker.setData(arr);
+								cb();
+							}
+						})
+					},
+					getMarjorGroupList: function() {
+						console.log('++++++++++++++++++++++++++++++++++++++学生++++++++++++++++++++++++++++++++++++++++++++')
+						var that = this;
+						getMajorGroup({
+							data: {},
+							success: function(data) {
+								that.majorGroupPicker = new mui.PopPicker();
+								var arr = [];
+								//mui 下拉框必须要写个value text 醉了 生成value text数组
+								data.data.forEach(function(item) {
+									arr.push({
+										value: item.id,
+										text: item.name
+									})
+								})
+								that.majorGroupPicker.setData(arr);
+							}
+						})
+					},
+					getMarjorList: function(cb) {
+						var that = this;
+						getMajorForGroup({
+							data: {
+								size: 999,
+								groupid: this.majorGroupPick.id,
+							},
+							success: function(data) {
+								cb(data);
+							}
+						})
+					},
+					showClassPick: function() {
+							if(this.majorGroupPick.id && this.majorPick.id) {
+								var that = this;
+								this.getClassList(function() {
+									that.classPicker.show(function(item) {
+										that.classPick.name = item[0].text;
+										that.classPick.id = item[0].value;
+									})
+								});
+							} else {
+								mui.toast('请选择专业部和专业');
+								return;
+							}
+						
+					},
+					plusReady: function() {
+						var that = this;
+						mui.plusReady(function() {
+							that.role = getUserRole();
+							menuPage().init();
+							that.getMarjorGroupList();
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
